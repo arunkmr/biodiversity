@@ -1,3 +1,4 @@
 biodiversity*.gem
 *json
 tmp
+bin/parsed*
