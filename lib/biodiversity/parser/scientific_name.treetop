@@ -147,7 +147,7 @@ grammar ScientificName
       end
     }
     /
-    a:original_authors_revised_name space b:authors_names_full {
+    a:original_authors_revised_name space b:authors_full {
       def value
         a.value + " " + b.value
       end
@@ -164,7 +164,7 @@ grammar ScientificName
   end
   
   rule simple_authors_part
-    a:original_authors_names_full space b:authors_names_full {
+    a:original_authors_full space b:authors_full {
       def value
         a.value + " " + b.value
       end
@@ -173,13 +173,13 @@ grammar ScientificName
       end
     }
     /
-    original_authors_names_full
+    original_authors_full
     /
-    authors_names_full
+    authors_full
   end
   
-  rule original_authors_names_full
-    "(" space a:authors_names_full space ")" {
+  rule original_authors_full
+    "(" space a:authors_full space ")" {
       def value
         "(" + a.value + ")"
       end
@@ -202,7 +202,7 @@ grammar ScientificName
   end
   
   rule authors_revised_name
-    a:authors_names_full space "ex" space b:authors_names_full {
+    a:authors_full space "ex" space b:authors_full {
       def value
         a.value + " ex " + b.value
       end
@@ -212,8 +212,8 @@ grammar ScientificName
     } 
   end
 
-  rule authors_names_full
-    a:authors_names space [,]? space b:year {
+  rule authors_full
+    a:authors space [,]? space b:year {
       def value 
         a.value + " " + b.value
       end
@@ -222,11 +222,11 @@ grammar ScientificName
       end
     }
     /
-    authors_names
+    authors
   end
       
-  rule authors_names
-    a:author_name space sep:author_name_separator space b:authors_names {
+  rule authors
+    a:author space sep:authors_separator space b:authors {
       def value
         sep.apply(a,b)
       end
@@ -236,10 +236,10 @@ grammar ScientificName
       end
     }
     /
-    author_name
+    author
   end  
   
-  rule author_name_separator
+  rule authors_separator
     ("&"/",") {
       def apply(a,b)
         sep = text_value.strip
@@ -253,7 +253,7 @@ grammar ScientificName
     }
   end
   
-  rule author_name
+  rule author
     space a:author_word space b:author_name space {
       def value
         a.value + " " + b.value
@@ -270,7 +270,7 @@ grammar ScientificName
   rule author_word
     "A S. Xu"
     /
-    ("anon."/"f."/"bis"/"arg."/"da"/"der"/"den"/"de"/"du"/"in"/"la"/"ter"/"van"/"von"/"et al.\{\?\}"/"et al.") {
+    ("anon."/"f."/"bis"/"arg."/"da"/"der"/"den"/"de"/"du"/"in"/"la"/"ter"/"van"/"von"/"al."/"et al.\{\?\}"/"et al.") {
       def value
         text_value.strip
       end
@@ -345,8 +345,8 @@ grammar ScientificName
       end
       
       def details
-        c = a.details[:subspecies] + b.details_subspecies
-        a.details.merge({:subspecies => c, :is_valid => false})
+        c = a.details[:infraspecies] + b.details_infraspecies
+        a.details.merge({:infraspecies => c, :is_valid => false})
       end
     }
     /
@@ -364,8 +364,8 @@ grammar ScientificName
       def details
         sel.details(a)
       end
-      def details_subspecies
-        details[:subspecies]
+      def details_infraspecies
+        details[:infraspecies]
       end
     }
   end
@@ -392,7 +392,7 @@ grammar ScientificName
   end
   
   rule rank
-    ("f.sp."/"f."/"B"/"ssp."/"mut."/"pseudovar."/"sect."/"ser."/"var."/"subvar."/ "[var.]" /"subsp."/"subf."/"race"/"α" 
+    ("forma" &(space latin_word)/"f.sp."/"f."/"B"/"ssp."/"mut."/"pseudovar."/"sect."/"ser."/"var."/"subvar."/ "[var.]" /"subsp."/"subf."/"race"/"α" 
     /"ββ"/"β"/"γ"/"δ"/"ε"/"φ"/"θ"/"μ"/"a."/"b."/"c."/"d."/"e."/"g."/"k."/"****"/"**"/"*")
     {
       def value
@@ -405,7 +405,7 @@ grammar ScientificName
         " " + a.value
       end
       def details(a = nil)
-        {:subspecies => [{:rank => text_value, :value => (a.value rescue nil)}]}
+        {:infraspecies => [{:rank => text_value, :value => (a.value rescue nil)}]}
       end
     }
   end
@@ -517,7 +517,7 @@ grammar ScientificName
   end
   
   rule year
-    [0-9A-Za-z\?]+ {
+    [0-9]+ {
       def value
         text_value.strip
       end

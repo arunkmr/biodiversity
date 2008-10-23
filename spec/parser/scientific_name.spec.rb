@@ -52,9 +52,9 @@ describe ScientificName do
   
   it 'should parse species autonym for complex subspecies authorships' do
     parse("Aus bus Linn. var. bus").should_not be_nil
-    details("Aus bus Linn. var. bus").should == {:species=>"bus", :species_authors=>{:authors=>{:names=>["Linn."]}}, :genus=>"Aus", :subspecies=>[{:rank=>"var.", :value=>"bus"}]}
+    details("Aus bus Linn. var. bus").should == {:species=>"bus", :species_authors=>{:authors=>{:names=>["Linn."]}}, :genus=>"Aus", :infraspecies=>[{:rank=>"var.", :value=>"bus"}]}
     parse("Agalinis purpurea (L.) Briton var. borealis (Berg.) Peterson 1987").should_not be_nil
-    details("Agalinis purpurea (L.) Briton var. borealis (Berg.) Peterson 1987").should == {:species=>"purpurea", :genus=>"Agalinis", :species_authors=>{:orig_authors=>{:names=>["L."]}, :authors=>{:names=>["Briton"]}}, :subspecies_authors=>{:orig_authors=>{:names=>["Berg."]}, :authors=>{:year=>"1987", :names=>["Peterson"]}}, :subspecies=>[{:value=>"borealis", :rank=>"var."}]}
+    details("Agalinis purpurea (L.) Briton var. borealis (Berg.) Peterson 1987").should == {:species=>"purpurea", :genus=>"Agalinis", :species_authors=>{:orig_authors=>{:names=>["L."]}, :authors=>{:names=>["Briton"]}}, :subspecies_authors=>{:orig_authors=>{:names=>["Berg."]}, :authors=>{:year=>"1987", :names=>["Peterson"]}}, :infraspecies =>[{:value=>"borealis", :rank=>"var."}]}
   end
   
   it 'should parse several authors' do
@@ -114,7 +114,7 @@ describe ScientificName do
     #had to add no dot rule for trinomials without a rank to make it to work
     parse("Saccharomyces drosophilae anon.").should_not be_nil
     parse("Acherontiella cavernicola (Tarsia in Curia, 1941)").should_not be_nil
-    parse("Tridentella tangeroae Bruce, 1988B").should_not be_nil
+    parse("Harpolithobius anodus dentatus").should_not be_nil
   end
   
   it 'should parse several authors with several years' do
@@ -128,19 +128,28 @@ describe ScientificName do
     parse("Pseudocercospora dendrobii (H.C. Burnett 1883) (Leight.) (Movss. 1967) U. Braun & Crous 2003").should be_nil
   end
 
-    
   it 'should parse utf-8 name' do
     parse("Trematosphaeria phaeospora (E. Müll.) L. Holm 1957").should_not be_nil
     value("Trematosphaeria         phaeospora (  E.      Müll.       )L.       Holm     1957").should == "Trematosphaeria phaeospora (E. Müll.) L. Holm 1957"
     canonical("Trematosphaeria phaeospora(E. Müll.) L.       Holm 1957").should == "Trematosphaeria phaeospora"
     details("Trematosphaeria phaeospora(E. Müll.) L.       Holm 1957 ").should == {:orig_authors=>{:names=>["E. M\303\274ll."]}, :species=>"phaeospora", :authors=>{:year=>"1957", :names=>["L. Holm"]}, :genus=>"Trematosphaeria"} 
   end
+
+  it "should parse name with forma" do
+    parse("Dianella odorata forma indica Schlitter").should_not be_nil
+    details("Dianella odorata forma indica Schlitter").should == {:species=>"odorata", :genus=>"Dianella", :authors=>{:names=>["Schlitter"]}, :infraspecies=>[{:value=>"indica", :rank=>"forma"}]}
+  end
+    
+  it "should parse forma as subspecies in trinomial" do
+    parse("Dianella odorata forma Schlitter").should_not be_nil
+    details("Dianella odorata forma Schlitter").should == {:species=>"odorata", :genus=>"Dianella", :authors=>{:names=>["Schlitter"]}, :subspecies=>{:value=>"forma", :rank=>"n/a"}}
+  end
   
   it "should parse name with f." do
     parse("Sphaerotheca fuliginea f. dahliae Movss. 1967").should_not be_nil
     value("   Sphaerotheca    fuliginea     f.    dahliae    Movss.   1967    ").should == "Sphaerotheca fuliginea f. dahliae Movss. 1967"
     canonical("Sphaerotheca fuliginea f. dahliae Movss. 1967").should == "Sphaerotheca fuliginea dahliae"
-    details("Sphaerotheca fuliginea f. dahliae Movss. 1967").should ==  {:subspecies=>[{:rank=>"f.", :value=>"dahliae"}], :authors=>{:year=>"1967", :names=>["Movss."]}, :species=>"fuliginea", :genus=>"Sphaerotheca"}
+    details("Sphaerotheca fuliginea f. dahliae Movss. 1967").should ==  {:infraspecies=>[{:rank=>"f.", :value=>"dahliae"}], :authors=>{:year=>"1967", :names=>["Movss."]}, :species=>"fuliginea", :genus=>"Sphaerotheca"}
   end
   
   it "should parse name with var." do
@@ -152,7 +161,7 @@ describe ScientificName do
   it "should parse name with several subspecies names NOT BOTANICAL CODE BUT NOT INFREQUENT" do
     parse("Hydnellum scrobiculatum var. zonatum f. parvum (Banker) D. Hall & D.E. Stuntz 1972").should_not be_nil
     value("Hydnellum scrobiculatum var. zonatum f. parvum (Banker) D. Hall & D.E. Stuntz 1972").should == "Hydnellum scrobiculatum var. zonatum f. parvum (Banker) D. Hall & D.E. Stuntz 1972"
-    details("Hydnellum scrobiculatum var. zonatum f. parvum (Banker) D. Hall & D.E. Stuntz 1972").should == {:orig_authors=>{:names=>["Banker"]}, :subspecies=>[{:rank=>"var.", :value=>"zonatum"}, {:rank=>"f.", :value=>"parvum"}], :species=>"scrobiculatum", :authors=>{:year=>"1972", :names=>["D. Hall", "D.E. Stuntz"]}, :genus=>"Hydnellum", :is_valid=>false}  
+    details("Hydnellum scrobiculatum var. zonatum f. parvum (Banker) D. Hall & D.E. Stuntz 1972").should == {:species=>"scrobiculatum", :orig_authors=>{:names=>["Banker"]}, :is_valid=>false, :genus=>"Hydnellum", :authors=>{:year=>"1972", :names=>["D. Hall", "D.E. Stuntz"]}, :infraspecies=>[{:value=>"zonatum", :rank=>"var."}, {:value=>"parvum", :rank=>"f."}]}
   end
   
   it "should parse status BOTANICAL RARE" do
@@ -239,8 +248,7 @@ describe ScientificName do
     value("Agaricus acris var. (b.)").should == "Agaricus acris var. (b.)"  
     parse("Agaricus acris var. (b.)").should_not be_nil 
     value("Agaricus acris var. (b.&c.)").should == "Agaricus acris var. (b.c.)"  
-    details("Agaricus acris var. (b.&c.)").should == {:editorial_markup=>"(b.c.)", :subspecies=>[{:rank=>"var.", :value=>nil}], :species=>"acris", :genus=>"Agaricus", :is_valid=>false}
-
+    details("Agaricus acris var. (b.&c.)").should == {:editorial_markup=>"(b.c.)", :infraspecies=>[{:rank=>"var.", :value=>nil}], :species=>"acris", :genus=>"Agaricus", :is_valid=>false}
   end
   
 end
