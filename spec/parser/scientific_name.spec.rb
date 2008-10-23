@@ -113,6 +113,8 @@ describe ScientificName do
     parse("Peltula coriacea Büdel, Henssen & Wessels 1986").should_not be_nil
     #had to add no dot rule for trinomials without a rank to make it to work
     parse("Saccharomyces drosophilae anon.").should_not be_nil
+    parse("Acherontiella cavernicola (Tarsia in Curia, 1941)").should_not be_nil
+    parse("Tridentella tangeroae Bruce, 1988B").should_not be_nil
   end
   
   it 'should parse several authors with several years' do

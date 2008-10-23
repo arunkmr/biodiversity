@@ -270,7 +270,7 @@ grammar ScientificName
   rule author_word
     "A S. Xu"
     /
-    ("anon."/"f."/"bis"/"arg."/"da"/"der"/"den"/"de"/"du"/"la"/"ter"/"van"/"et al.\{\?\}"/"et al.") {
+    ("anon."/"f."/"bis"/"arg."/"da"/"der"/"den"/"de"/"du"/"in"/"la"/"ter"/"van"/"von"/"et al.\{\?\}"/"et al.") {
       def value
         text_value.strip
       end
@@ -279,7 +279,7 @@ grammar ScientificName
       end
     }
     / 
-    ("Å"/"Ö"/"Á"/"Ø"/"Ô"/"Š"/"Ś"/"Č"/"Ķ"/"Ł"/"É"/"Ž"/[A-Z]) [^0-9()\s&,]+ {
+    "d\'"? ("Å"/"Ö"/"Á"/"Ø"/"Ô"/"Š"/"Ś"/"Č"/"Ķ"/"Ł"/"É"/"Ž"/[A-Z]) [^0-9()\s&,]+ {
       def value
         text_value.gsub(/\s+/, " ").strip
       end
@@ -517,7 +517,7 @@ grammar ScientificName
   end
   
   rule year
-    [0-9\?]+ {
+    [0-9A-Za-z\?]+ {
       def value
         text_value.strip
       end
