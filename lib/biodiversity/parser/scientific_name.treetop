@@ -254,7 +254,7 @@ grammar ScientificName
   end
   
   rule author
-    space a:author_word space b:author_name space {
+    space a:author_word space b:author space {
       def value
         a.value + " " + b.value
       end

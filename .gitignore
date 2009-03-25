@@ -2,3 +2,4 @@ biodiversity*.gem
 *json
 tmp
 bin/parsed*
+.DS_Store

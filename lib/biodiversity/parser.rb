@@ -1,2 +1,2 @@
 dir = File.dirname(__FILE__)
-require File.join(dir, *%w[parser scientific_name])
+require File.join(dir, *%w[scientific_name scientific_name_dirty])
