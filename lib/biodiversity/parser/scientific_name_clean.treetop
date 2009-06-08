@@ -1,119 +1,35 @@
 # encoding: UTF-8
 grammar ScientificNameClean
 
-  rule composite_scientific_name
-    a:scientific_name space hybrid_separator space b:scientific_name space {
-      def value
-        a.value + " × " + b.value
-      end
-      def canonical
-        a.canonical + " × " + b.canonical
-      end
-      
-      def pos
-        a.pos.merge(b.pos)
-      end
-      
-      def details
-        {:hybrid => {:scientific_name1 => a.details, :scientific_name2 => b.details}}
-      end
-    }
-    /
-    a:scientific_name space hybrid_separator space [\?]? {
-      def value
-        a.value + " × ?"
-      end
-      
-      def canonical
-        a.canonical
-      end
-      
-      def pos
-        a.pos
-      end
-      
-      def details
-        {:hybrid => {:scientific_name1 => a.details, :scientific_name2 => "?"}}
-      end
-    }
-    /
-    scientific_name 
-  end
-  
   rule scientific_name
-    name_part_authors_mix
+    species_name
     /
-    space a:name_part space b:authors_part space c:taxon_concept_rank space d:authors_part space {
+    uninomial_name
+  end
+  
+  rule species_name
+    a:cap_latin_word space_hard b:latin_word {
       def value
-        a.value + " " + b.value + " " + c.apply(d)
+        a.value + " " + b.value 
       end
-    
+
       def canonical
-        a.canonical
+        value
       end
       
       def pos
-        a.pos.merge(b.pos).merge(d.pos)
-      end
-    
-      def details
-        a.details.merge(b.details).merge(c.details(d)).merge({:name_part_verbatim => a.text_value, :auth_part_verbatim => (b.text_value + " " + c.text_value + " " + d.text_value).gsub(/\s{2,}/, ' ').strip})
-      end    
-    }
-    / 
-    space a:name_part space b:taxon_concept_rank space c:authors_part space {
-      def value
-        a.value + " " + b.apply(c)
-      end
-    
-      def canonical
-        a.canonical
-      end
-      
-      def pos
-        a.pos.merge(c.pos)
-      end
-    
-      def details
-        a.details.merge(b.details(c)).merge({:name_part_verbatim => a.text_value, :auth_part_verbatim => (b.text_value + " " + c.text_value).gsub(/\s{2,}/, ' ').strip})
-      end    
-    }
-    / 
-    space a:name_part space b:authors_part space c:status_part space {
-      def value
-        a.value + " " + b.value + " " + c.value
-      end
-      def canonical
-        a.canonical
-      end
-      
-      def pos
-        a.pos.merge(b.pos)
+        {a.interval.begin => ['genus', a.interval.end], b.interval.begin => ['species', b.interval.end]}
       end
       
       def details
-        a.details.merge(b.details).merge(c.details).merge({:name_part_verbatim => a.text_value, :auth_part_verbatim => (b.text_value + " " + c.text_value).gsub(/\s{2,}/, ' ').strip})
+        {:genus => {:epitheton => a.value}, :species => {:epitheton => b.value}}
       end
     }
-    /
-    space a:name_part space b:authors_part space {
-      def value
-        a.value + " " + b.value
-      end
-      def canonical
-        a.canonical
-      end
-      
-      def pos
-        a.pos.merge(b.pos)
-      end
-      
-      def details
-        a.details.merge(b.details).merge({:name_part_verbatim => a.text_value, :auth_part_verbatim => b.text_value.gsub(/\s{2,}/, ' ')})
-      end
-    }
-    /
-    space a:name_part space b:year space {
+  end
+  
+  
+  rule uninomial_name
+    a:uninomial_epitheton space_hard b:authorship {
       def value
         a.value + " " + b.value
       end
@@ -127,242 +43,32 @@ grammar ScientificNameClean
       end
       
       def details
-        a.details.merge(b.details).merge({:is_valid => false}).merge({:name_part_verbatim => a.text_value, :auth_part_verbatim => b.text_value.gsub(/\s{2,}/, ' ')})
+        {:uninomial => a.details[:uninomial].merge(b.details)}
       end
     }
     /
-    name_part
-  end
-  
-  rule status_part
-    a:status_word space b:status_part {
-      def value
-        a.value + " " + b.value
-      end
-      def details
-        {:status => value}
-      end
-    }
-    /
-    status_word
-  end
-  
-  rule status_word
-    latin_word [\.] {
-      def value
-        text_value.strip
-      end
-      def details
-        {:status => value}
-      end
-    }
-    /
-    latin_word
-  end
-  
-  rule name_part_authors_mix
-    a:species_name space b:authors_part space c:subspecies_name space d:authors_part {
-      def value
-        (a.value + " " + b.value + " " + c.value + " " + d.value).gsub(/\s+/,' ')
-      end
-      def canonical
-        (a.canonical + " " + c.canonical).gsub(/\s+/,' ')
-      end
-      
-      def pos
-        a.pos.merge(b.pos).merge(c.pos).merge(d.pos)
-      end
-      
-      def details
-        a.details.merge(c.details).merge({:species_authors=>b.details, :subspecies_authors => d.details}).merge({:name_part_verbatim => a.text_value, :auth_part_verbatim => (b.text_value + " " + c.text_value + " " + d.text_value).gsub(/\s{2,}/, ' ')})
-      end
-    }
-    /
-    a:species_name space b:authors_part space c:subspecies_name {
-      def value 
-        (a.value + " " + b.value + " " + c.value).gsub(/\s+/,' ')
-      end
-      def canonical
-        (a.canonical + " " + c.canonical).gsub(/\s+/,' ')
-      end
-      def details
-        a.details.merge(c.details).merge({:species_authors=>b.details}).merge({:name_part_verbatim => a.text_value, :auth_part_verbatim => (b.text_value + " " + c.text_value).gsub(/\s{2,}/, ' ')})
-      end
-    }
-  end
-  
-  rule authors_part
-    a:original_authors_revised_name space b:authors_revised_name {
-      def value 
-        a.value + " " + b.value
-      end
-      
-      def pos
-        a.pos.merge(b.pos)
-      end
-      
-      def details
-        a.details.merge(b.details)
-      end
-    }
-    /
-    a:simple_authors_part space ex_sep space b:simple_authors_part {
-      def value 
-        a.value + " ex " + b.value
-      end
-      
-      def pos
-        a.pos.merge(b.pos)
-      end
-      
-      def details
-        {:revised_name_authors => {:revised_authors => a.details[:authors], :authors => b.details[:authors]}}
-      end
-    }
-    /
-    a:original_authors_revised_name space b:authors_names_full {
-      def value
-        a.value + " " + b.value
-      end
-      
-      def pos
-        a.pos.merge(b.pos)
-      end
-      
-      def details
-        a.details.merge(b.details)
-      end
-    }
-    /
-    authors_revised_name
-    /
-    original_authors_revised_name
-    /
-    simple_authors_part
-  end
-  
-  rule simple_authors_part
-    a:original_authors_names_full space b:authors_names_full {
-      def value
-        a.value + " " + b.value
-      end
-      
-      def pos
-        a.pos.merge(b.pos)
-      end
-      
-      def details
-        a.details.merge(b.details)
-      end
-    }
-    /
-    original_authors_names_full
-    /
-    authors_names_full
-  end
-  
-  rule original_authors_names_full
-    left_bracket space a:authors_names space right_bracket space [,]? space b:year {
-      def value
-        "(" + a.value + " " + b.value + ")"
-      end
-      
-      def pos
-        a.pos.merge(b.pos)
-      end
-      
-      def details
-        {:orig_authors => a.details[:authors], :year => b.details[:year]}
-      end
-    }
-    /
-    left_bracket space a:authors_names_full space right_bracket {
-      def value
-        "(" + a.value + ")"
-      end
-      
-      def pos
-        a.pos
-      end
-      
-      def details
-        {:orig_authors => a.details[:authors]}
-      end
-    }
-    /
-    "[" space a:authors_names_full space "]" {
-       def value
-         "(" + a.value + ")"
-       end
-       
-       def pos
-         a.pos
-       end
-       
-       def details
-         {:orig_authors => a.details[:authors]}
-       end
-     }
-     /
-    left_bracket space a:unknown_auth space right_bracket {
-      def value
-        "(" + a.value + ")"
-      end
-      
-      def pos
-        a.pos
-      end
-      
-      def details
-        {:orig_authors => a.details[:authors]}
-      end
-    }
-    /
-    left_bracket space "?" space right_bracket {
-      def value
-        "(?)"
-      end
-      def details
-        {:orig_authors => "unknown"}
-      end
-    }
-  end
-    
-  rule original_authors_revised_name
-    left_bracket space a:authors_revised_name space right_bracket {
-      def value
-        "(" + a.value + ")"
-      end
-      
-      def pos
-        a.pos
-      end
-      
-      def details
-        {:original_revised_name_authors => a.details[:revised_name_authors]}
-      end
-    }
-  end
-  
-  rule authors_revised_name
-    a:authors_names_full space ex_sep space b:authors_names_full {
-      def value
-        a.value + " ex " + b.value
-      end
-      
-      def pos
-        a.pos.merge(b.pos)
-      end
-      
-      def details
-        {:revised_name_authors =>{:revised_authors => a.details[:authors], :authors => b.details[:authors]}}
-      end
-    } 
+    uninomial_epitheton
   end
 
-  rule authors_names_full
+  rule uninomial_epitheton
+    cap_latin_word {
+      def canonical
+        value
+      end
+      
+      def pos
+        {interval.begin => ['uninomial', interval.end]}
+      end
+      
+      def details 
+        {:uninomial => {:epitheton => value}}
+      end
+    }
+  end
+   
+  rule authorship
     a:authors_names space [,]? space b:year {
-      def value 
+      def value
         a.value + " " + b.value
       end
       
@@ -371,37 +77,27 @@ grammar ScientificNameClean
       end
       
       def details
-        {:authors => {:names => a.details[:authors][:names]}.merge(b.details)}
+        { :authorship => text_value, 
+          :basionymAuthorTeam => {
+            :authorTeam => a.text_value
+          }.merge(a.details).merge(b.details)
+        }
       end
     }
     /
-    authors_names
-    /
-    unknown_auth
-  end
-  
-  rule unknown_auth
-    ("auct."/"hort."/"anon."/"ht.") {
-      def value
-        text_value
-      end
-      
-      def pos
-       {interval.begin => ['unknown_author', interval.end]}
-      end
-      
+    authors_names {
       def details
-        {:authors => "unknown"}
+        { :authorship => text_value, 
+          :basionymAuthorTeam => {
+            :authorTeam => text_value
+          }.merge(super)
+        }      
       end
     }
   end
   
-  rule ex_sep
-    ("ex"/"in")
-  end
-      
   rule authors_names
-    a:author_name space sep:author_name_separator space b:authors_names {
+    a:author_name space sep:author_separator space b:authors_names {
       def value
         sep.apply(a,b)
       end
@@ -418,7 +114,7 @@ grammar ScientificNameClean
     author_name
   end  
   
-  rule author_name_separator
+  rule author_separator
     ("&"/","/"and"/"et") {
       def apply(a,b)
         sep = text_value.strip
@@ -431,7 +127,7 @@ grammar ScientificNameClean
       end
       
       def details(a,b)
-        {:authors => {:names => a.details[:authors][:names] + b.details[:authors][:names]}}
+        {:author => a.details[:author] + b.details[:author]}
       end
     }
   end
@@ -447,7 +143,7 @@ grammar ScientificNameClean
       end
       
       def details
-        {:authors => {:names => [value]}}
+        {:author => [a.value]}
       end
     }
     /
@@ -465,7 +161,7 @@ grammar ScientificNameClean
       end
       
       def details
-        {:authors => {:names => [value]}}
+        {:author => [value]}
       end
     }
     /
@@ -480,7 +176,7 @@ grammar ScientificNameClean
       end
       
       def details
-        {:authors => {:names => [value]}}
+        {:author => [value]}
       end
     }
     / 
@@ -494,329 +190,15 @@ grammar ScientificNameClean
       end
       
       def details
-        {:authors => {:names => [value]}}
+        {:author => [value]}
       end
     }
   end
-  
-  rule name_part
-    space a:species_name space b:rank space_hard c:editorials_full {
-      def value
-        a.value + " " + b.value + " " + c.value
-      end
-      def canonical
-        a.canonical
-      end
-      
-      def pos
-        a.pos
-      end
-      
-      def details
-        a.details.merge(b.details).merge(c.details)
-      end
-    }
-    /
-    space a:species_name space b:subspecies_names {
-      def value
-        a.value + b.value
-      end
-      def canonical
-        a.canonical + b.canonical
-      end
-      
-      def pos
-        a.pos.merge(b.pos)
-      end
-      
-      def details
-        a.details.merge(b.details)
-      end
-    }
-    /
-    space a:species_name space b:latin_word ![\.] {
-      def value
-        a.value + " " + b.value
-      end
-      
-      def canonical
-        value
-      end
-      
-      def pos
-        a.pos.merge({b.interval.begin => ['subspecies' => b.interval.end]})
-      end
-      
-      def details
-        a.details.merge({:subspecies => {:rank => "n/a", :value =>b.value}})
-      end
-    }
-    /
-    species_name
-    / 
-    cap_latin_word
-  end
-  
-  rule subspecies_names
-    a:subspecies_name space b:subspecies_names {
-      def value
-        a.value + b.value
-      end
-      
-      def canonical
-        a.canonical + b.canonical
-      end
-      
-      def pos
-        a.pos.merge(b.pos)
-      end
-      
-      def details
-        c = a.details[:subspecies] + b.details_subspecies
-        a.details.merge({:subspecies => c, :is_valid => false})
-      end
-    }
-    /
-    subspecies_name
-  end
-  
-  rule subspecies_name
-    sel:rank space_hard a:latin_word {
-      def value 
-        sel.apply(a)
-      end
-      def canonical
-        sel.canonical(a)
-      end
-      
-      def pos
-        {a.interval.begin => ['subspecies', a.interval.end]}
-      end
-      def details
-        sel.details(a)
-      end
-      def details_subspecies
-        details[:subspecies]
-      end
-    }
-  end
-  
-  rule editorials_full 
-    "(" space a:editorials space ")" {
-      def value
-        "(" + a.value + ")"
-      end
-      def details
-        {:editorial_markup => value, :is_valid => false}
-      end
-    }
-  end
-  
-  rule editorials
-    space a:rank space [&]? space b:editorials {
-      def value
-        a.value + b.value
-      end
-      def details
-        {:editorial_markup => value, :is_valid => false}
-      end 
-    }
-    /
-    rank
-  end
-  
-  rule rank
-    ("morph."/"f.sp."/"B"/"ssp."/"mut."/"pseudovar."/"sect."/"ser."/"var."/"subvar."/ "[var.]" /"subsp."/"subf."/"race"/"α" 
-    /"ββ"/"β"/"γ"/"δ"/"ε"/"φ"/"θ"/"μ"/"a."/"b."/"c."/"d."/"e."/"g."/"k."/"****"/"**"/"*")
-    {
-      def value
-        text_value.strip
-      end
-      def apply(a)
-        " " + text_value + " " + a.value
-      end
-      def canonical(a)
-        " " + a.value
-      end
-      def details(a = nil)
-        {:subspecies => [{:rank => text_value, :value => (a.value rescue nil)}]}
-      end
-    }
-    /
-    rank_forma
-  end
-  
-  rule rank_forma
-    ("forma"/"form."/"fo."/"f.")
-    {
-      def value
-        "f."
-      end
-      def apply(a)
-        " " + value + " " + a.value
-      end
-      def canonical(a)
-        " " + a.value
-      end
-      def details(a = nil)
-        {:subspecies => [{:rank => value, :value => (a.value rescue nil)}]}
-      end
-    }
-  end
-  
-  rule species_name
-    hybrid_separator space_hard a:cap_latin_word space_hard b:latin_word {
-      def value
-        "× " + a.value + " " + b.value
-      end
-      def canonical
-        a.value + " " + b.value
-      end
-      
-      def pos
-        {a.interval.begin => ['genus', a.interval.end], b.interval.begin => ['species', b.interval.end]}
-      end
-      
-      def details
-        {:genus => a.value, :species => b.value, :cross => 'before'}
-      end
-    }
-    /
-    hybrid_separator space_hard a:cap_latin_word {
-      def value
-        "× " + a.value
-      end
-      def canonical
-        a.value
-      end
-      
-      def pos
-        {a.interval.begin => ['uninomial', a.interval.end]}
-      end
-      
-      def details
-        {:uninomial => a.value, :cross => 'before'}
-      end
-    }
-    /
-    a:cap_latin_word space_hard hybrid_separator space_hard b:latin_word {
-      def value
-        a.value + " × " + b.value
-      end
-      def canonical
-        a.value + " " + b.value
-      end
-      
-      def pos
-        {a.interval.begin => ['genus', a.interval.end], b.interval.begin => ['species', b.interval.end]}
-      end
-      
-      def details
-        {:genus => a.value, :species => b.value, :cross => 'inside'}
-      end
-    }
-    /
-    a:cap_latin_word space b:subgenus space c:latin_word {
-      def value
-        a.value + " " + b.value + " " + c.value
-      end
-      def canonical
-        a.value + " " + c.value
-      end
-      
-      def pos
-        {a.interval.begin => ['genus', a.interval.end]}.merge(b.pos).merge({c.interval.begin => ['subspecies', c.interval.end]})
-      end
-      
-      def details
-        {:genus => a.value, :subgenus => b.details, :species => c.value}
-      end
-    } 
-    /
-    a:cap_latin_word space_hard b:latin_word {
-      def value
-        a.value + " " + b.value 
-      end
-      def canonical
-        value
-      end
-      
-      def pos
-        {a.interval.begin => ['genus', a.interval.end], b.interval.begin => ['species', b.interval.end]}
-      end
-      
-      def details
-        {:genus => a.value, :species => b.value}
-      end
-    }
-  end
-  
-  rule subgenus
-    "(" space a:cap_latin_word space ")" {
-      def value
-        "(" + a.value + ")"
-      end
-      
-      def pos
-        {a.interval.begin => ['subgenus', a.interval.end]}
-      end
-      
-      def details
-        a.value
-      end
-    }
-  end
-  
-  rule taxon_concept_rank
-    "sec." {
-      def value
-        "sec."
-      end
-      def apply(a)
-        " " + value + " " + a.value
-      end
-      def details(a = nil)
-        {:taxon_concept => a.details}
-      end    
-    }
-  end
-
-  #  "subsect."/"subtrib."/"subgen."/"trib."/
-  rule genus_rank
-    ("subsect."/"subtrib."/"subgen."/"trib.")
-    {
-      def value
-        text_value.strip
-      end
-      def apply(a)
-        " " + text_value + " " + a.value
-      end
-      def canonical(a)
-        " " + a.value
-      end
-      def details(a = nil)
-        {:subgenus => [{:rank => text_value, :value => (a.value rescue nil)}]}
-      end
-    }
-  end
-  
   
   rule cap_latin_word
     a:([A-Z]/cap_digraph) b:latin_word "?" {
       def value
         (a.value rescue a.text_value) + b.value
-      end
-      
-      def canonical 
-        value
-      end
-      
-      def pos
-        {a.interval.begin => ['uninomial', a.interval.end]}
-      end
-      
-      def details 
-        {:uninomial => value}
       end
     }
     /
@@ -824,35 +206,11 @@ grammar ScientificNameClean
       def value
         (a.value rescue a.text_value) + b.value
       end
-      
-      def canonical 
-        value
-      end
-      
-      def pos
-        {a.interval.begin => ['uninomial',b.interval.end]}
-      end
-      
-      def details 
-        {:uninomial => value}
-      end
     }
     /
     ("Ca"/"Ea"/"Ge"/"Ia"/"Io"/"Io"/"Ix"/"Lo"/"Oa"/"Ra"/"Ty"/"Ua"/"Aa"/"Ja"/"Zu"/"La"/"Qu"/"As"/"Ba") {
       def value
         text_value
-      end
-      
-      def canonical
-        value
-      end
-      
-      def pos
-        {interval.begin => ['uninomial', interval.end]}
-      end
-      
-      def details
-        {:uninomial => value}
       end
     }
   end
@@ -862,28 +220,19 @@ grammar ScientificNameClean
       def value
         a.text_value + b.value
       end
-      def details
-        {}
-      end
      }
      /
      a:digraph b:full_name_letters {
       def value
         a.value + b.value
       end
-      def details
-        {}
-      end
      }
   end
-  
+
   rule full_name_letters
     a:digraph b:full_name_letters {
       def value
         a.value + b.value
-      end
-      def details
-        {}
       end
     }
     /
@@ -891,87 +240,74 @@ grammar ScientificNameClean
       def value
         a.value + b.value + c.value
       end
-      def details
-        {}
-      end
     }
     /
     valid_name_letters
   end
-  
+
   rule valid_name_letters
     [a-z\-ëüäöïé]+ {
       def value
         text_value
       end
-      def details
-        {}
-      end
     }
   end 
-  
-   rule cap_digraph
-   "Æ" {
-   def value
-     'Ae'
-   end
-   }
-      /
-   "Œ" {
-   def value
-     'Oe'
-   end
-   }  
-   end
-    
-  rule digraph
-   "æ" {
-   def value
-     'ae'
-   end
-   }
-      /
-   "œ" {
-   def value
-     'oe'
-   end
-   }
-   end
-   
-  rule hybrid_separator
-    ("x"/"X"/"×") {
+
+  rule cap_digraph
+    "Æ" {
       def value
-        "x"
-      end
-      def details
-        {}
+      'Ae'
       end
     }
-  end
-  
-  rule year
-    year_with_character
     /
-    [0-9\?]+ {
+    "Œ" {
       def value
-        text_value.strip
+      'Oe'
       end
-      
-      def pos
-        {interval.begin => ['year', interval.end]}
+    }  
+  end
+
+  rule digraph
+    "æ" {
+      def value
+      'ae'
       end
-      
-      def details
-        {:year => value}
+    }   
+    /
+    "œ" {
+      def value
+      'oe'
       end
     }
   end
-  
-  rule year_with_character
-    a:[0-9\?]+ [a-zA-Z] {
+
+  rule year
+    year_number_with_character
+    /
+    year_number
+  end
+
+  rule year_number_with_character
+    a:year_number [a-zA-Z] {
       def value
         a.text_value
       end
+
+      def pos
+        {interval.begin => ['year', interval.end]}
+      end
+
+      def details
+        {:year => value}
+      end
+    }
+  end
+  
+  rule year_number
+    [12] [7890] [0-9] [0-9\?] {
+      def value
+        text_value
+      end
       
       def pos
         {interval.begin => ['year', interval.end]}
@@ -982,43 +318,13 @@ grammar ScientificNameClean
       end
     }
   end
-
-#    Next two rles only for ( (author) )
-#    doesn't touch parenthesis inside another one like (bla-bla-bla1 (bla-bla-bla2))
-
-    rule left_bracket
-      "( ("/"("
-      {
-        def value
-          "("
-        end
-      }
-    end
-
-    rule right_bracket
-      ") )"/")"
-      {
-        def value
-          ")"
-        end
-      }
-    end
-  
   
   rule space
-    [\s]* {
-      def details
-        {
-        }
-      end
-    }
+    [\s]*
   end
 
   rule space_hard
-    [\s]+ {
-      def details
-        {}
-      end
-    }
+    [\s]+
   end
+  
 end

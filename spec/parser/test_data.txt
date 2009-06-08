@@ -1,3 +1,4 @@
-Pseudocercospora|{"scientificName":{"parsed":true,"verbatim":"Pseudocercospora","normalized":"Pseudocercospora","canonical":"Pseudocercospora","uninomial":"Pseudocercospora"}}|uninomial
-Pseudocercospora Speg. 1910|{}|uninomial with author and year
+Pseudocercospora|{"scientificName":{"parsed":true,"verbatim":"Pseudocercospora","normalized":"Pseudocercospora","canonical":"Pseudocercospora","uninomial":{"epitheton":"Pseudocercospora"}}}|uninomial
+Pseudocercospora Speg.|{"scientificName"=>{"parsed"=>true, "verbatim"=>"Pseudocercospora Speg.", "normalized"=>"Pseudocercospora Speg.", "canonical"=>"Pseudocercospora", "uninomial"=>{"epitheton"=>"Pseudocercospora", "authorship"=>"Speg.", "basionymAuthorTeam"=>{"authorTeam"=>"Speg.", "author"=>["Speg."]}}}}|uninomial with author
+Pseudocercospora Speg. 1910|{"scientificName"=>{"parsed"=>true, "verbatim"=>"Pseudocercospora Speg.", "normalized"=>"Pseudocercospora Speg.", "canonical"=>"Pseudocercospora", "uninomial"=>{"epitheton"=>"Pseudocercospora", "authorship"=>"Speg.", "basionymAuthorTeam"=>{"authorTeam"=>"Speg.", "author"=>["Speg."]}}}}|uninomial with author and year
 Pseudocercospora Spegazzini, 1910|{}|uninomial with author and year
