@@ -152,8 +152,51 @@ grammar ScientificNameClean
       end
     }
   end
-   
+  
   rule authorship
+    basionym_authorship_with_parenthesis
+    /
+    simple_authorship
+  end
+   
+  
+  rule basionym_authorship_with_parenthesis
+    "(" space a:authors_names space ")" space [,]? space b:year {
+      def value
+        "(" + a.value + " " + b.value + ")"
+      end
+      
+      def pos
+        a.pos.merge(b.pos)
+      end 
+      
+      def details
+        { :authorship => text_value, 
+          :basionymAuthorTeam => {
+            :authorTeam => a.text_value
+          }.merge(a.details).merge(b.details)
+        }      
+      end    
+    }
+    /
+    "(" space a:simple_authorship space ")" {
+      def value
+        "(" + a.value + ")"
+      end
+      
+      def pos
+        a.pos
+      end
+      
+      def details
+        val = a.details
+        val[:authorship] = text_value
+        val      
+      end
+    }
+  end
+
+  rule simple_authorship
     a:authors_names space [,]? space b:year {
       def value
         a.value + " " + b.value
@@ -164,8 +207,12 @@ grammar ScientificNameClean
       end
       
       def details
+        details_with_arg(:basionymAuthorTeam)
+      end
+      
+      def details_with_arg(authorTeamType = 'basionymAuthorTeam')
         { :authorship => text_value, 
-          :basionymAuthorTeam => {
+          authorTeamType.to_sym => {
             :authorTeam => a.text_value.strip
           }.merge(a.details).merge(b.details)
         }
@@ -174,10 +221,16 @@ grammar ScientificNameClean
     /
     authors_names {
       def details
+        details = details_with_arg(:basionymAuthorTeam)
+        details[:basionymAuthorTeam].merge!(super)
+        details
+      end
+      
+      def details_with_arg(authorTeamType = 'basionymAuthorTeam')
         { :authorship => text_value, 
-          :basionymAuthorTeam => {
+          authorTeamType.to_sym => {
             :authorTeam => text_value
-          }.merge(super)
+          }
         }      
       end
     }
