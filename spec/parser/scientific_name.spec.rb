@@ -40,22 +40,22 @@ describe ScientificNameClean do
     f = open(File.expand_path(dir + "../../spec/parser/test_data.txt"))
     f.each do |line|
       name, jsn, notes = line.split("|")
-      next unless name && jsn
+      next unless line.match(/^\s*#/) == nil && name && jsn 
       JSON.load(json(name)).should == JSON.load(jsn)
     end
   end
 
-  # it 'should parse accurate name' do
-  #   sn = 'Pseudocercospora     dendrobii'
-  #   parse(sn).should_not be_nil
-  #   value(sn).should == 'Pseudocercospora dendrobii'
-  #   canonical(sn).should == 'Pseudocercospora dendrobii'
-  #   details(sn).should == {:species=>"dendrobii", :genus=>"Pseudocercospora"}
-  #   pos(sn).should == {0=>["genus", 16], 21=>["species", 30]}
-  #   canonical('Quoyula').should == 'Quoyula'
-  #   parse('Perissandra laotica').should_not be_nil
-  # end
-  # 
+  it 'should parse valid scientific name' do
+    sn = 'Pseudocercospora     dendrobii'
+    parse(sn).should_not be_nil
+    value(sn).should == 'Pseudocercospora dendrobii'
+    canonical(sn).should == 'Pseudocercospora dendrobii'
+    details(sn).should == {:genus=>{:epitheton=>"Pseudocercospora"}, :species=>{:epitheton=>"dendrobii"}}
+    pos(sn).should == {0=>["genus", 16], 21=>["species", 30]}
+    canonical('Quoyula').should == 'Quoyula'
+    parse('Perissandra laotica').should_not be_nil
+  end
+  
   # it 'should parse inaccurate name' do
   #   parse("Tridentella tangeroae Bruce, 198?").should_not be_nil
   # end

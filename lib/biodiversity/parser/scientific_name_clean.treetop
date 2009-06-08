@@ -2,31 +2,118 @@
 grammar ScientificNameClean
 
   rule scientific_name
-    species_name
+    multinomial_name
     /
     uninomial_name
   end
   
-  rule species_name
-    a:cap_latin_word space_hard b:latin_word {
+  rule multinomial_name
+    a:genus space b:subgenus space c:species {
+      def value
+        a.value + " " + b.value + " " + c.value
+      end
+      
+      def canonical
+        a.canonical + " " + c.canonical
+      end
+      
+      def pos
+        a.pos.merge(b.pos).merge(c.pos)
+      end
+      
+      def details
+        a.details.merge(b.details).merge(c.details)
+      end
+    }
+    /
+    a:genus space_hard b:species {
       def value
         a.value + " " + b.value 
       end
 
       def canonical
-        value
+        a.canonical + " " + b.canonical
       end
       
       def pos
-        {a.interval.begin => ['genus', a.interval.end], b.interval.begin => ['species', b.interval.end]}
+        a.pos.merge(b.pos)
       end
       
       def details
-        {:genus => {:epitheton => a.value}, :species => {:epitheton => b.value}}
+        a.details.merge(b.details)
       end
     }
   end
   
+  rule species
+    a:species_epitheton space_hard b:authorship {
+      def value
+        a.value + " " + b.value
+      end
+      
+      def canonical
+        a.canonical
+      end
+      
+      def pos
+        a.pos.merge(b.pos)
+      end
+      
+      def details
+        {:species => a.details[:species].merge(b.details)}
+      end
+    }
+    /
+    species_epitheton
+  end
+  
+  rule species_epitheton
+    latin_word {
+      def canonical
+        value
+      end
+    
+      def pos
+        {interval.begin => ['species', interval.end]}
+      end
+    
+      def details
+        {:species => {:epitheton => value}}
+      end
+    }
+  end
+  
+  rule subgenus
+    "(" space a:cap_latin_word space ")" {
+      def value
+        "(" + a.value + ")"
+      end
+      
+      def pos
+        {a.interval.begin => ['subgenus', a.interval.end]}
+      end
+      
+      def details
+        {:subgenus => {:epitheton => a.value}}
+      end
+    }
+  end
+  
+  rule genus
+    cap_latin_word {
+      def pos
+        {interval.begin => ['genus', interval.end]}
+      end
+      
+      def canonical
+        value
+      end
+          
+      def details
+        {:genus => {:epitheton => value}}
+      end
+    }
+  end
   
   rule uninomial_name
     a:uninomial_epitheton space_hard b:authorship {
@@ -79,7 +166,7 @@ grammar ScientificNameClean
       def details
         { :authorship => text_value, 
           :basionymAuthorTeam => {
-            :authorTeam => a.text_value
+            :authorTeam => a.text_value.strip
           }.merge(a.details).merge(b.details)
         }
       end
@@ -143,7 +230,7 @@ grammar ScientificNameClean
       end
       
       def details
-        {:author => [a.value]}
+        {:author => [value]}
       end
     }
     /
@@ -180,9 +267,9 @@ grammar ScientificNameClean
       end
     }
     / 
-    ("Å"/"Ö"/"Á"/"Ø"/"Ô"/"Š"/"Ś"/"Č"/"Ķ"/"Ł"/"É"/"Ž"/[A-Z]) [^0-9()\s&,]+ {
+    ("Å"/"Ö"/"Á"/"Ø"/"Ô"/"Š"/"Ś"/"Č"/"Ķ"/"Ł"/"É"/"Ž"/[A-Z]) [^0-9()\s&,]* {
       def value
-        text_value.gsub(/\s+/, " ").strip
+        text_value
       end
       
       def pos

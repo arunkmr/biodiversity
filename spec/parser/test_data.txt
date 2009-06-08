@@ -1,4 +1,60 @@
-Pseudocercospora|{"scientificName":{"parsed":true,"verbatim":"Pseudocercospora","normalized":"Pseudocercospora","canonical":"Pseudocercospora","uninomial":{"epitheton":"Pseudocercospora"}}}|uninomial
-Pseudocercospora Speg.|{"scientificName"=>{"parsed"=>true, "verbatim"=>"Pseudocercospora Speg.", "normalized"=>"Pseudocercospora Speg.", "canonical"=>"Pseudocercospora", "uninomial"=>{"epitheton"=>"Pseudocercospora", "authorship"=>"Speg.", "basionymAuthorTeam"=>{"authorTeam"=>"Speg.", "author"=>["Speg."]}}}}|uninomial with author
-Pseudocercospora Speg. 1910|{"scientificName"=>{"parsed"=>true, "verbatim"=>"Pseudocercospora Speg.", "normalized"=>"Pseudocercospora Speg.", "canonical"=>"Pseudocercospora", "uninomial"=>{"epitheton"=>"Pseudocercospora", "authorship"=>"Speg.", "basionymAuthorTeam"=>{"authorTeam"=>"Speg.", "author"=>["Speg."]}}}}|uninomial with author and year
-Pseudocercospora Spegazzini, 1910|{}|uninomial with author and year
+#
+# Scientific Names Parser Test
+#
+# Test consists of a pipe delimited input (scientific name) and parsed output in json format
+#
+
+#uninomial
+Pseudocercospora|{"scientificName":{"parsed":true,"verbatim":"Pseudocercospora","normalized":"Pseudocercospora","canonical":"Pseudocercospora","uninomial":{"epitheton":"Pseudocercospora"}}}
+
+#uninomial with author
+Pseudocercospora Speg.|{"scientificName":{"parsed":true,"verbatim":"Pseudocercospora Speg.","normalized":"Pseudocercospora Speg.","canonical":"Pseudocercospora","uninomial":{"epitheton":"Pseudocercospora", "authorship":"Speg.", "basionymAuthorTeam":{"authorTeam":"Speg.", "author":["Speg."]}}}}
+
+#uninomial with author and year
+Pseudocercospora Speg. 1910|{"scientificName":{"parsed":true, "verbatim":"Pseudocercospora Speg. 1910", "normalized":"Pseudocercospora Speg. 1910", "canonical":"Pseudocercospora", "uninomial":{"epitheton":"Pseudocercospora", "authorship":"Speg. 1910", "basionymAuthorTeam":{"authorTeam":"Speg.", "author":["Speg."], "year":"1910"}}}}
+Pseudocercospora Spegazzini, 1910|{"scientificName":{"parsed":true, "verbatim":"Pseudocercospora Spegazzini, 1910", "normalized":"Pseudocercospora Spegazzini 1910", "canonical":"Pseudocercospora", "uninomial":{"epitheton":"Pseudocercospora", "authorship":"Spegazzini, 1910", "basionymAuthorTeam":{"authorTeam":"Spegazzini", "author":["Spegazzini"], "year":"1910"}}}}
+
+#two-letter genus names (legacy genes, not allowed anymore)
+Ca Dyar 1914|{"scientificName":{"parsed":true, "verbatim":"Ca Dyar 1914", "normalized":"Ca Dyar 1914", "canonical":"Ca", "uninomial":{"epitheton":"Ca", "authorship":"Dyar 1914", "basionymAuthorTeam":{"authorTeam":"Dyar", "author":["Dyar"], "year":"1914"}}}}
+Ea Distant 1911|{"scientificName":{"parsed":true, "verbatim":"Ea Distant 1911", "normalized":"Ea Distant 1911", "canonical":"Ea", "uninomial":{"epitheton":"Ea", "authorship":"Distant 1911", "basionymAuthorTeam":{"authorTeam":"Distant", "author":["Distant"], "year":"1911"}}}}
+Ge Nicéville 1895|{"scientificName":{"parsed":true, "verbatim":"Ge Nicéville 1895", "normalized":"Ge Nicéville 1895", "canonical":"Ge", "uninomial":{"epitheton":"Ge", "authorship":"Nicéville 1895", "basionymAuthorTeam":{"authorTeam":"Nicéville", "author":["Nicéville"], "year":"1895"}}}}
+Ia Thomas 1902|{"scientificName":{"parsed":true, "verbatim":"Ia Thomas 1902", "normalized":"Ia Thomas 1902", "canonical":"Ia", "uninomial":{"epitheton":"Ia", "authorship":"Thomas 1902", "basionymAuthorTeam":{"authorTeam":"Thomas", "author":["Thomas"], "year":"1902"}}}}
+Io Lea 1831| {"scientificName":{"parsed":true, "verbatim":"Io Lea 1831", "normalized":"Io Lea 1831", "canonical":"Io", "uninomial":{"epitheton":"Io", "authorship":"Lea 1831", "basionymAuthorTeam":{"authorTeam":"Lea", "author":["Lea"], "year":"1831"}}}}
+Io Blanchard 1852|{"scientificName":{"parsed":true, "verbatim":"Io Blanchard 1852", "normalized":"Io Blanchard 1852", "canonical":"Io", "uninomial":{"epitheton":"Io", "authorship":"Blanchard 1852", "basionymAuthorTeam":{"authorTeam":"Blanchard", "author":["Blanchard"], "year":"1852"}}}}
+Ix Bergroth 1916|{"scientificName":{"parsed":true, "verbatim":"Ix Bergroth 1916", "normalized":"Ix Bergroth 1916", "canonical":"Ix", "uninomial":{"epitheton":"Ix", "authorship":"Bergroth 1916", "basionymAuthorTeam":{"authorTeam":"Bergroth", "author":["Bergroth"], "year":"1916"}}}}
+Lo Seale 1906|{"scientificName":{"parsed":true, "verbatim":"Lo Seale 1906", "normalized":"Lo Seale 1906", "canonical":"Lo", "uninomial":{"epitheton":"Lo", "authorship":"Seale 1906", "basionymAuthorTeam":{"authorTeam":"Seale", "author":["Seale"], "year":"1906"}}}}
+Oa Girault 1929|{"scientificName":{"parsed":true, "verbatim":"Oa Girault 1929", "normalized":"Oa Girault 1929", "canonical":"Oa", "uninomial":{"epitheton":"Oa", "authorship":"Girault 1929", "basionymAuthorTeam":{"authorTeam":"Girault", "author":["Girault"], "year":"1929"}}}}
+Ra Whitley 1931|{"scientificName":{"parsed":true, "verbatim":"Ra Whitley 1931", "normalized":"Ra Whitley 1931", "canonical":"Ra", "uninomial":{"epitheton":"Ra", "authorship":"Whitley 1931", "basionymAuthorTeam":{"authorTeam":"Whitley", "author":["Whitley"], "year":"1931"}}}}
+Ty Bory de St. Vincent 1827|{"scientificName":{"parsed":true, "verbatim":"Ty Bory de St. Vincent 1827", "normalized":"Ty Bory de St. Vincent 1827", "canonical":"Ty", "uninomial":{"epitheton":"Ty", "authorship":"Bory de St. Vincent 1827", "basionymAuthorTeam":{"authorTeam":"Bory de St. Vincent", "author":["Bory de St. Vincent"], "year":"1827"}}}}
+Ua Girault 1929|{"scientificName":{"parsed":true, "verbatim":"Ua Girault 1929", "normalized":"Ua Girault 1929", "canonical":"Ua", "uninomial":{"epitheton":"Ua", "authorship":"Girault 1929", "basionymAuthorTeam":{"authorTeam":"Girault", "author":["Girault"], "year":"1929"}}}}
+Aa Baker 1940|{"scientificName":{"parsed":true, "verbatim":"Aa Baker 1940", "normalized":"Aa Baker 1940", "canonical":"Aa", "uninomial":{"epitheton":"Aa", "authorship":"Baker 1940", "basionymAuthorTeam":{"authorTeam":"Baker", "author":["Baker"], "year":"1940"}}}}
+Ja Uéno 1955|{"scientificName":{"parsed":true, "verbatim":"Ja Uéno 1955", "normalized":"Ja Uéno 1955", "canonical":"Ja", "uninomial":{"epitheton":"Ja", "authorship":"Uéno 1955", "basionymAuthorTeam":{"authorTeam":"Uéno", "author":["Uéno"], "year":"1955"}}}}
+Zu Walters & Fitch 1960|{"scientificName":{"parsed":true, "verbatim":"Zu Walters & Fitch 1960", "normalized":"Zu Walters et Fitch 1960", "canonical":"Zu", "uninomial":{"epitheton":"Zu", "authorship":"Walters & Fitch 1960", "basionymAuthorTeam":{"authorTeam":"Walters & Fitch", "author":["Walters", "Fitch"], "year":"1960"}}}}
+La Bleszynski 1966|{"scientificName":{"parsed":true, "verbatim":"La Bleszynski 1966", "normalized":"La Bleszynski 1966", "canonical":"La", "uninomial":{"epitheton":"La", "authorship":"Bleszynski 1966", "basionymAuthorTeam":{"authorTeam":"Bleszynski", "author":["Bleszynski"], "year":"1966"}}}}
+Qu Durkoop|{"scientificName":{"parsed":true, "verbatim":"Qu Durkoop", "normalized":"Qu Durkoop", "canonical":"Qu", "uninomial":{"epitheton":"Qu", "authorship":"Durkoop", "basionymAuthorTeam":{"authorTeam":"Durkoop", "author":["Durkoop"]}}}}
+As Slipinski 1982|{"scientificName":{"parsed":true, "verbatim":"As Slipinski 1982", "normalized":"As Slipinski 1982", "canonical":"As", "uninomial":{"epitheton":"As", "authorship":"Slipinski 1982", "basionymAuthorTeam":{"authorTeam":"Slipinski", "author":["Slipinski"], "year":"1982"}}}}
+Ba Solem 1983|{"scientificName":{"parsed":true, "verbatim":"Ba Solem 1983", "normalized":"Ba Solem 1983", "canonical":"Ba", "uninomial":{"epitheton":"Ba", "authorship":"Solem 1983", "basionymAuthorTeam":{"authorTeam":"Solem", "author":["Solem"], "year":"1983"}}}}
+
+#canonical binomial
+Pseudocercospora     dendrobii|{"scientificName":{"parsed":true, "verbatim":"Pseudocercospora     dendrobii", "normalized":"Pseudocercospora dendrobii", "canonical":"Pseudocercospora dendrobii", "genus":{"epitheton":"Pseudocercospora"}, "species":{"epitheton":"dendrobii"}}}
+
+#binomial with author and a year
+Platypus bicaudatulus Schedl 1935|{"scientificName":{"parsed":true, "verbatim":"Platypus bicaudatulus Schedl 1935", "normalized":"Platypus bicaudatulus Schedl 1935", "canonical":"Platypus bicaudatulus", "genus":{"epitheton":"Platypus"}, "species":{"epitheton":"bicaudatulus", "authorship":"Schedl 1935", "basionymAuthorTeam":{"authorTeam":"Schedl", "author":["Schedl"], "year":"1935"}}}}
+Platypus bicaudatulus Schedl, 1935h|{"scientificName":{"parsed":true, "verbatim":"Platypus bicaudatulus Schedl, 1935h", "normalized":"Platypus bicaudatulus Schedl 1935", "canonical":"Platypus bicaudatulus", "genus":{"epitheton":"Platypus"}, "species":{"epitheton":"bicaudatulus", "authorship":"Schedl, 1935h", "basionymAuthorTeam":{"authorTeam":"Schedl", "author":["Schedl"], "year":"1935"}}}}
+
+#iczn: species name with subgenus
+Hegeter (Hegeter) intercedens Lindberg H 1950|{"scientificName":{"parsed":true, "verbatim":"Hegeter (Hegeter) intercedens Lindberg H 1950", "normalized":"Hegeter (Hegeter) intercedens Lindberg H 1950", "canonical":"Hegeter intercedens", "genus":{"epitheton":"Hegeter"}, "subgenus":{"epitheton":"Hegeter"}, "species":{"epitheton":"intercedens", "authorship":"Lindberg H 1950", "basionymAuthorTeam":{"authorTeam":"Lindberg H", "author":["Lindberg H"], "year":"1950"}}}}
+
+#unicode utf8 characters in name
+Rühlella|{"scientificName":{"parsed":true, "verbatim":"Rühlella", "normalized":"Rühlella", "canonical":"Rühlella", "uninomial":{"epitheton":"Rühlella"}}}
+Sténométope laevissimus Bibron 1855|{"scientificName":{"parsed":true, "verbatim":"Sténométope laevissimus Bibron 1855", "normalized":"Sténométope laevissimus Bibron 1855", "canonical":"Sténométope laevissimus", "genus":{"epitheton":"Sténométope"}, "species":{"epitheton":"laevissimus", "authorship":"Bibron 1855", "basionymAuthorTeam":{"authorTeam":"Bibron", "author":["Bibron"], "year":"1855"}}}}
+
+#digraph unicode characters
+Læptura laetifica Dow, 1913|{"scientificName":{"parsed":true, "verbatim":"Læptura laetifica Dow, 1913", "normalized":"Laeptura laetifica Dow 1913", "canonical":"Laeptura laetifica", "genus":{"epitheton":"Laeptura"}, "species":{"epitheton":"laetifica", "authorship":"Dow, 1913", "basionymAuthorTeam":{"authorTeam":"Dow", "author":["Dow"], "year":"1913"}}}}
+Leptura lætifica Dow, 1913|{"scientificName":{"parsed":true, "verbatim":"Leptura lætifica Dow, 1913", "normalized":"Leptura laetifica Dow 1913", "canonical":"Leptura laetifica", "genus":{"epitheton":"Leptura"}, "species":{"epitheton":"laetifica", "authorship":"Dow, 1913", "basionymAuthorTeam":{"authorTeam":"Dow", "author":["Dow"], "year":"1913"}}}}
+Leptura leætifica Dow, 1913|{"scientificName":{"parsed":true, "verbatim":"Leptura leætifica Dow, 1913", "normalized":"Leptura leaetifica Dow 1913", "canonical":"Leptura leaetifica", "genus":{"epitheton":"Leptura"}, "species":{"epitheton":"leaetifica", "authorship":"Dow, 1913", "basionymAuthorTeam":{"authorTeam":"Dow", "author":["Dow"], "year":"1913"}}}}
+Leæptura laetifica Dow, 1913|{"scientificName":{"parsed":true, "verbatim":"Leæptura laetifica Dow, 1913", "normalized":"Leaeptura laetifica Dow 1913", "canonical":"Leaeptura laetifica", "genus":{"epitheton":"Leaeptura"}, "species":{"epitheton":"laetifica", "authorship":"Dow, 1913", "basionymAuthorTeam":{"authorTeam":"Dow", "author":["Dow"], "year":"1913"}}}}
+Leœptura laetifica Dow, 1913|{"scientificName":{"parsed":true, "verbatim":"Leœptura laetifica Dow, 1913", "normalized":"Leoeptura laetifica Dow 1913", "canonical":"Leoeptura laetifica", "genus":{"epitheton":"Leoeptura"}, "species":{"epitheton":"laetifica", "authorship":"Dow, 1913", "basionymAuthorTeam":{"authorTeam":"Dow", "author":["Dow"], "year":"1913"}}}}
+Ærenea cognata Lacordaire, 1872|{"scientificName":{"parsed":true, "verbatim":"Ærenea cognata Lacordaire, 1872", "normalized":"Aerenea cognata Lacordaire 1872", "canonical":"Aerenea cognata", "genus":{"epitheton":"Aerenea"}, "species":{"epitheton":"cognata", "authorship":"Lacordaire, 1872", "basionymAuthorTeam":{"authorTeam":"Lacordaire", "author":["Lacordaire"], "year":"1872"}}}}
+Œdicnemus capensis|{"scientificName":{"parsed":true, "verbatim":"Œdicnemus capensis", "normalized":"Oedicnemus capensis", "canonical":"Oedicnemus capensis", "genus":{"epitheton":"Oedicnemus"}, "species":{"epitheton":"capensis"}}}
+Œnanthe œnanthe|{"scientificName":{"parsed":true, "verbatim":"Œnanthe œnanthe", "normalized":"Oenanthe oenanthe", "canonical":"Oenanthe oenanthe", "genus":{"epitheton":"Oenanthe"}, "species":{"epitheton":"oenanthe"}}}
