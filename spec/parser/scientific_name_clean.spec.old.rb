@@ -31,101 +31,6 @@ describe ScientificNameClean do
     parse(input).pos
   end
   
-  it 'should parse uninomial' do
-    sn = 'Pseudocercospora'
-    parse(sn).should_not be_nil
-    value(sn).should == 'Pseudocercospora'
-    canonical(sn).should == 'Pseudocercospora'
-    details(sn).should == {:uninomial=>"Pseudocercospora"}
-    pos(sn).should == {0=>["uninomial", 16]}
-  end
-  
-  it 'should parse uninomial with author and year' do
-    sn = 'Pseudocercospora Dow 1913'
-    parse(sn).should_not be_nil
-    value(sn).should == 'Pseudocercospora Dow 1913'
-    details(sn).should == {:authors=>{:year=>"1913", :names=>["Dow"]}, :name_part_verbatim=>"Pseudocercospora", :auth_part_verbatim=>"Dow 1913", :uninomial=>"Pseudocercospora"}
-    pos(sn).should == {0=>["uninomial", 16], 17=>["author_word", 20], 21=>["year", 25]}
-  end
-  
-  it 'should parse canonical' do
-    sn = 'Pseudocercospora     dendrobii'
-    parse(sn).should_not be_nil
-    value(sn).should == 'Pseudocercospora dendrobii'
-    canonical(sn).should == 'Pseudocercospora dendrobii'
-    details(sn).should == {:species=>"dendrobii", :genus=>"Pseudocercospora"}
-    pos(sn).should == {0=>["genus", 16], 21=>["species", 30]}
-  end
-  
-  it 'should parse subgenus ZOOLOGICAL' do
-    sn = "Doriteuthis (Amerigo) pealeii Author 1999"
-    parse(sn).should_not be_nil
-    value(sn).should == "Doriteuthis (Amerigo) pealeii Author 1999"
-    canonical(sn).should == "Doriteuthis pealeii"
-    details(sn).should == {:genus=>"Doriteuthis", :subgenus=>"Amerigo", :species=>"pealeii", :authors=>{:names=>["Author"], :year=>"1999"}, :name_part_verbatim=>"Doriteuthis (Amerigo) pealeii", :auth_part_verbatim=>"Author 1999"}
-    pos(sn).should == {0=>["genus", 11], 13=>["subgenus", 20], 22=>["subspecies", 29], 30=>["author_word", 36], 37=>["year", 41]}
-  end
-  
-  it 'should parse æ in the name' do
-    names = [
-      ["Læptura laetifica Dow, 1913", "Laeptura laetifica Dow 1913"],
-      ["Leptura lætifica Dow, 1913", "Leptura laetifica Dow 1913"],
-      ["Leptura leætifica Dow, 1913", "Leptura leaetifica Dow 1913"],
-      ["Leæptura laetifica Dow, 1913", "Leaeptura laetifica Dow 1913"],
-      ["Leœptura laetifica Dow, 1913", "Leoeptura laetifica Dow 1913"],
-      ['Ærenea cognata Lacordaire, 1872', 'Aerenea cognata Lacordaire 1872'],
-      ['Œdicnemus capensis ehrenbergi', 'Oedicnemus capensis ehrenbergi'],
-      ['Œnanthe œnanthe œnanthe','Oenanthe oenanthe oenanthe']
-    ]
-    names.each do |name_pair|
-      parse(name_pair[0]).should_not be_nil
-      value(name_pair[0]).should == name_pair[1]
-    end
-  end
-  
-  it 'should parse names with "common" utf-8 charactes' do
-    names = ["Rühlella","Sténométope laevissimus Bibron 1855"].each do |name|
-      parse(name).should_not be_nil
-    end
-  end
-  
-  it 'should parse names with a valid 2 letter genus' do
-    ["Ca Dyar 1914",
-    "Ea Distant 1911",
-    "Ge Nicéville 1895",
-    "Ia Thomas 1902",
-    "Io Lea 1831",
-    "Io Blanchard 1852",
-    "Ix Bergroth 1916",
-    "Lo Seale 1906",
-    "Oa Girault 1929",
-    "Ra Whitley 1931",
-    "Ty Bory de St. Vincent 1827",
-    "Ua Girault 1929",
-    "Aa Baker 1940",
-    #"Mc",
-    "Ja Uéno 1955",
-    "Zu Walters & Fitch 1960",
-    "La Bleszynski 1966",
-    "Qu Durkoop",
-    "As Slipinski 1982",
-    "Ba Solem 1983"].each do |name|
-      parse(name).should_not be_nil
-    end
-    canonical('Quoyula').should == 'Quoyula'
-  end
-
-  it 'should parse year' do
-    sn = "Platypus bicaudatulus Schedl 1935"
-    parse(sn).should_not be_nil
-    value(sn).should == "Platypus bicaudatulus Schedl 1935"
-    sn = "Platypus bicaudatulus Schedl, 1935h"
-    parse(sn).should_not be_nil
-    value(sn).should == "Platypus bicaudatulus Schedl 1935"
-    details(sn).should == {:genus=>"Platypus", :species=>"bicaudatulus", :authors=>{:names=>["Schedl"], :year=>"1935"}, :name_part_verbatim=>"Platypus bicaudatulus", :auth_part_verbatim=>"Schedl, 1935h"}
-    pos(sn).should == {0=>["genus", 8], 9=>["species", 21], 22=>["author_word", 28], 30=>["year", 35]}
-    parse("Platypus bicaudatulus Schedl, 1935B").should_not be_nil
-  end
   
   it 'should parse species autonym for complex subspecies authorships' do
     parse("Aus bus Linn. var. bus").should_not be_nil
@@ -136,47 +41,9 @@ describe ScientificNameClean do
     pos(sn).should == {0=>["genus", 8], 9=>["species", 17], 19=>["author_word", 21], 23=>["author_word", 29], 35=>["subspecies", 43], 45=>["author_word", 50], 52=>["author_word", 60], 61=>["year", 65]}
   end
   
-  it 'should parse several authors' do
-    sn = "Pseudocercospora dendrobii U. Braun & Crous"
-    parse(sn).should_not be_nil
-    value(sn).should == "Pseudocercospora dendrobii U. Braun et Crous"
-    canonical(sn).should == "Pseudocercospora dendrobii"
-    details(sn).should ==  {:genus=>"Pseudocercospora", :species=>"dendrobii", :authors=>{:names=>["U. Braun", "Crous"]}, :name_part_verbatim=>"Pseudocercospora dendrobii", :auth_part_verbatim=>"U. Braun & Crous"}
-    pos(sn).should == {0=>["genus", 16], 17=>["species", 26], 27=>["author_word", 29], 30=>["author_word", 35], 38=>["author_word", 43]}
-    sn = "Pseudocercospora dendrobii U. Braun and Crous"
-    parse(sn).should_not be_nil
-    value(sn).should == "Pseudocercospora dendrobii U. Braun et Crous"
-    pos(sn).should == {0=>["genus", 16], 17=>["species", 26], 27=>["author_word", 29], 30=>["author_word", 35], 40=>["author_word", 45]}
-    sn = "Pseudocercospora dendrobii U. Braun et Crous"
-    parse(sn).should_not be_nil
-    value(sn).should == "Pseudocercospora dendrobii U. Braun et Crous"    
-  end
-
-  it 'should parse several authors with a year' do
-    sn = "Pseudocercospora dendrobii U. Braun & Crous 2003"
-    parse(sn).should_not be_nil
-    value(sn).should == "Pseudocercospora dendrobii U. Braun et Crous 2003"
-    canonical(sn).should == "Pseudocercospora dendrobii"
-    details(sn).should == {:genus=>"Pseudocercospora", :species=>"dendrobii", :authors=>{:names=>["U. Braun", "Crous"], :year=>"2003"}, :name_part_verbatim=>"Pseudocercospora dendrobii", :auth_part_verbatim=>"U. Braun & Crous 2003"}
-    pos(sn).should == {0=>["genus", 16], 17=>["species", 26], 27=>["author_word", 29], 30=>["author_word", 35], 38=>["author_word", 43], 44=>["year", 48]}
-    sn = "Pseudocercospora dendrobii Crous, 2003"
-    parse(sn).should_not be_nil
-    parse("Zophosis persis (Chatanay, 1914)").should_not be_nil
-    parse("Zophosis persis (Chatanay 1914)").should_not be_nil
-    sn = "Zophosis persis (Chatanay), 1914"
-    parse(sn).should_not be_nil
-    value(sn).should == "Zophosis persis (Chatanay 1914)"
-    details(sn).should == {:genus=>"Zophosis", :species=>"persis", :orig_authors=>{:names=>["Chatanay"]}, :year=>"1914", :name_part_verbatim=>"Zophosis persis", :auth_part_verbatim=>"(Chatanay), 1914"}
-    pos(sn).should == {0=>["genus", 8], 9=>["species", 15], 17=>["author_word", 25], 28=>["year", 32]}
-    parse("Zophosis persis (Chatanay) 1914").should_not be_nil
-    #parse("Zophosis persis Chatanay (1914)").should_not be_nil
-  end  
   
-  it 'should parse scientific name' do
-    parse("Pseudocercospora dendrobii (H.C. Burnett) U. Braun & Crous 2003").should_not be_nil
-    value("Pseudocercospora dendrobii(H.C.     Burnett)U. Braun & Crous     2003").should == "Pseudocercospora dendrobii (H.C. Burnett) U. Braun et Crous 2003"
-    canonical("Pseudocercospora dendrobii(H.C.     Burnett)U. Braun & Crous     2003").should == "Pseudocercospora dendrobii"
-
+  
+  it 'shuould parse real world examples' do
     sn = "Stagonospora polyspora M.T. Lucas & Sousa da Câmara 1934"
     parse(sn).should_not be_nil
     value(sn).should == "Stagonospora polyspora M.T. Lucas et Sousa da Câmara 1934"
@@ -214,37 +81,8 @@ describe ScientificNameClean do
     details(sn).should == {:genus=>"Saccharomyces", :species=>"drosophilae", :authors=>{:names=>["anon."]}, :name_part_verbatim=>"Saccharomyces drosophilae", :auth_part_verbatim=>"anon."}
     pos(sn).should == {0=>["genus", 13], 14=>["species", 25], 26=>["author_word", 31]}
   end
-  
-  it 'should parse several authors with several years' do
-    sn = "Pseudocercospora dendrobii (H.C. Burnett 1883) U. Braun & Crous 2003"
-    parse(sn).should_not be_nil
-    value(sn).should == "Pseudocercospora dendrobii (H.C. Burnett 1883) U. Braun et Crous 2003"
-    canonical(sn).should == "Pseudocercospora dendrobii"
-    details(sn).should == {:genus=>"Pseudocercospora", :species=>"dendrobii", :orig_authors=>{:names=>["H.C. Burnett"], :year=>"1883"}, :authors=>{:names=>["U. Braun", "Crous"], :year=>"2003"}, :name_part_verbatim=>"Pseudocercospora dendrobii", :auth_part_verbatim=>"(H.C. Burnett 1883) U. Braun & Crous 2003"}
-    pos(sn).should == {0=>["genus", 16], 17=>["species", 26], 28=>["author_word", 32], 33=>["author_word", 40], 41=>["year", 45], 47=>["author_word", 49], 50=>["author_word", 55], 58=>["author_word", 63], 64=>["year", 68]}
-  end
-  
-  it 'should parse unknown original authors (auct.)/(hort.)/(?)' do
-    parse("Tragacantha leporina (?) Kuntze").should_not be_nil
-    value("Tragacantha    leporina (    ?      )       Kuntze").should == "Tragacantha leporina (?) Kuntze"
-    sn = "Lachenalia tricolor var. nelsonii (auct.) Baker"
-    parse(sn).should_not be_nil
-    value(sn).should == "Lachenalia tricolor var. nelsonii (auct.) Baker"
-    details(sn).should == {:genus=>"Lachenalia", :species=>"tricolor", :subspecies=>[{:rank=>"var.", :value=>"nelsonii"}], :orig_authors=>"unknown", :authors=>{:names=>["Baker"]}, :name_part_verbatim=>"Lachenalia tricolor var. nelsonii", :auth_part_verbatim=>"(auct.) Baker"}
-    pos(sn).should == {0=>["genus", 10], 11=>["species", 19], 25=>["subspecies", 33], 35=>["unknown_author", 40], 42=>["author_word", 47]}
-  end
-  
-  it 'should parse unknown authors auct./anon./hort./ht.' do
-    sn = "Puya acris ht. ex Gentil"
-    parse(sn).should_not be_nil
-    pos(sn).should == {0=>["genus", 4], 5=>["species", 10], 11=>["unknown_author", 14], 18=>["author_word", 24]}
-  end
-  
+    
 
-  it 'should not parse serveral authors groups with several years NOT CORRECT' do
-    parse("Pseudocercospora dendrobii (H.C. Burnett 1883) (Leight.) (Movss. 1967) U. Braun & Crous 2003").should be_nil
-  end
-  
   it 'should parse names with taxon concept sec. part' do
     sn = "Sténométope laevissimus sec. Eschmeyer 2004"
     parse(sn).should_not be_nil
@@ -261,15 +99,6 @@ describe ScientificNameClean do
     # puts "</pre>"
   end
 
-    
-  it 'should parse utf-8 name' do
-    sn = "Trematosphaeria phaeospora (E. Müll.)         L.             Holm 1957"
-    parse(sn).should_not be_nil
-    value(sn).should == "Trematosphaeria phaeospora (E. Müll.) L. Holm 1957"
-    canonical(sn).should == "Trematosphaeria phaeospora"
-    details(sn).should == {:genus=>"Trematosphaeria", :species=>"phaeospora", :orig_authors=>{:names=>["E. Müll."]}, :authors=>{:names=>["L. Holm"], :year=>"1957"}, :name_part_verbatim=>"Trematosphaeria phaeospora", :auth_part_verbatim=>"(E. Müll.) L. Holm 1957"}
-    pos(sn).should == {0=>["genus", 15], 16=>["species", 26], 28=>["author_word", 30], 31=>["author_word", 36], 46=>["author_word", 48], 61=>["author_word", 65], 66=>["year", 70]}
-  end
   
   it "should parse name with var." do
     sn = "Phaeographis inusta var. macularis(Leight.) A.L. Sm. 1861"
@@ -345,14 +174,6 @@ end
     pos(sn).should == {0=>["genus", 12], 13=>["species", 23], 25=>["author_word", 29], 31=>["author_word", 35], 36=>["author_word", 42]}
   end
   
-  it "should parse name without a year but with authors" do 
-    sn = "Arthopyrenia hyalospora(Nyl.)R.C.     Harris"
-    parse(sn).should_not be_nil
-    value(sn).should == "Arthopyrenia hyalospora (Nyl.) R.C. Harris"
-    canonical(sn).should == "Arthopyrenia hyalospora"
-    pos(sn).should == {0=>["genus", 12], 13=>["species", 23], 24=>["author_word", 28], 29=>["author_word", 33], 38=>["author_word", 44]}
-  end
-  
   it "should parse revised (ex) names" do
     #invalidly published
     sn = "Arthopyrenia hyalospora (Nyl. ex Banker) R.C. Harris"
@@ -421,27 +242,6 @@ end
     details(sn).should == {:hybrid=>{:scientific_name1=>{:species=>"hyalospora", :genus=>"Arthopyrenia"}, :scientific_name2=>"?"}}
     pos(sn).should == {0=>["genus", 12], 13=>["species", 23]}
   end
-
-  
-
-  it "should parse name with subspecies without rank NOT BOTANICAL" do
-    sn = "Hydnellum scrobiculatum zonatum (Banker) D. Hall & D.E. Stuntz 1972"
-    parse(sn).should_not be_nil
-    value(sn).should == "Hydnellum scrobiculatum zonatum (Banker) D. Hall et D.E. Stuntz 1972"
-    canonical(sn).should == "Hydnellum scrobiculatum zonatum"
-    details(sn).should == {:genus=>"Hydnellum", :species=>"scrobiculatum", :subspecies=>{:rank=>"n/a", :value=>"zonatum"}, :orig_authors=>{:names=>["Banker"]}, :authors=>{:names=>["D. Hall", "D.E. Stuntz"], :year=>"1972"}, :name_part_verbatim=>"Hydnellum scrobiculatum zonatum", :auth_part_verbatim=>"(Banker) D. Hall & D.E. Stuntz 1972"}
-    pos(sn).should == {0=>["genus", 9], 10=>["species", 23], 24=>[{"subspecies"=>31}], 33=>["author_word", 39], 41=>["author_word", 43], 44=>["author_word", 48], 51=>["author_word", 55], 56=>["author_word", 62], 63=>["year", 67]}
-    sn = "Begonia pingbienensis angustior"
-    parse(sn).should_not be_nil
-    details(sn).should == {:genus=>"Begonia", :species=>"pingbienensis", :subspecies=>{:rank=>"n/a", :value=>"angustior"}}
-    pos(sn).should == {0=>["genus", 7], 8=>["species", 21], 22=>[{"subspecies"=>31}]}
-  end
-  
-  it "should not parse unallowed utf-8 chars in name part" do
-    parse("Érematosphaeria phaespora").should be_nil
-    parse("Trematosphaeria phaeáapora").should be_nil
-    parse("Trematоsphaeria phaeáapora").should be_nil #cyrillic o
-  end
   
   it "should parse some invalid names" do
     parse("Acarospora cratericola 1929").should_not be_nil
@@ -463,12 +263,5 @@ end
   end
 
 #  val = "Ferganoconcha? oblonga"
-  it 'should parse genus?' do
-    sn = "Ferganoconcha? oblonga"
-    parse(sn).should_not be_nil
-    value(sn).should == "Ferganoconcha oblonga"
-    details(sn).should == {:genus=>"Ferganoconcha", :species=>"oblonga"}   
-    pos(sn).should == {0=>["genus", 14], 15=>["species", 22]}
-  end
   
 end

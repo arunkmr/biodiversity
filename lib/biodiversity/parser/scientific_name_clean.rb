@@ -53,9 +53,57 @@ module ScientificNameClean
     def c
       elements[4]
     end
+
+    def space_hard
+      elements[5]
+    end
+
+    def d
+      elements[6]
+    end
   end
 
   module MultinomialName1
+    def value
+      a.value + " " + b.value + " " + c.value + " " + d.value
+    end
+  
+    def canonical
+      a.canonical + " " + c.canonical + " " + d.canonical
+    end
+  
+    def pos
+      a.pos.merge(b.pos).merge(c.pos).merge(d.pos)
+    end
+  
+    def details
+      a.details.merge(b.details).merge(c.details).merge(d.details)
+    end
+  end
+
+  module MultinomialName2
+    def a
+      elements[0]
+    end
+
+    def space
+      elements[1]
+    end
+
+    def b
+      elements[2]
+    end
+
+    def space
+      elements[3]
+    end
+
+    def c
+      elements[4]
+    end
+  end
+
+  module MultinomialName3
     def value
       a.value + " " + b.value + " " + c.value
     end
@@ -73,7 +121,47 @@ module ScientificNameClean
     end
   end
 
-  module MultinomialName2
+  module MultinomialName4
+    def a
+      elements[0]
+    end
+
+    def space_hard
+      elements[1]
+    end
+
+    def b
+      elements[2]
+    end
+
+    def space_hard
+      elements[3]
+    end
+
+    def c
+      elements[4]
+    end
+  end
+
+  module MultinomialName5
+    def value
+      a.value + " " + b.value + " " + c.value 
+    end
+
+    def canonical
+      a.canonical + " " + b.canonical + " " + c.canonical
+    end
+  
+    def pos
+      a.pos.merge(b.pos).merge(c.pos)
+    end
+  
+    def details
+      a.details.merge(b.details).merge(c.details)
+    end
+  end
+
+  module MultinomialName6
     def a
       elements[0]
     end
@@ -87,7 +175,7 @@ module ScientificNameClean
     end
   end
 
-  module MultinomialName3
+  module MultinomialName7
     def value
       a.value + " " + b.value 
     end
@@ -129,6 +217,14 @@ module ScientificNameClean
           if r5
             r6 = _nt_species
             s1 << r6
+            if r6
+              r7 = _nt_space_hard
+              s1 << r7
+              if r7
+                r8 = _nt_infraspecies
+                s1 << r8
+              end
+            end
           end
         end
       end
@@ -144,34 +240,239 @@ module ScientificNameClean
     if r1
       r0 = r1
     else
-      i7, s7 = index, []
-      r8 = _nt_genus
-      s7 << r8
-      if r8
-        r9 = _nt_space_hard
-        s7 << r9
-        if r9
-          r10 = _nt_species
-          s7 << r10
+      i9, s9 = index, []
+      r10 = _nt_genus
+      s9 << r10
+      if r10
+        r11 = _nt_space
+        s9 << r11
+        if r11
+          r12 = _nt_subgenus
+          s9 << r12
+          if r12
+            r13 = _nt_space
+            s9 << r13
+            if r13
+              r14 = _nt_species
+              s9 << r14
+            end
+          end
         end
       end
-      if s7.last
-        r7 = instantiate_node(SyntaxNode,input, i7...index, s7)
-        r7.extend(MultinomialName2)
-        r7.extend(MultinomialName3)
+      if s9.last
+        r9 = instantiate_node(SyntaxNode,input, i9...index, s9)
+        r9.extend(MultinomialName2)
+        r9.extend(MultinomialName3)
       else
-        self.index = i7
-        r7 = nil
+        self.index = i9
+        r9 = nil
       end
-      if r7
-        r0 = r7
+      if r9
+        r0 = r9
+      else
+        i15, s15 = index, []
+        r16 = _nt_genus
+        s15 << r16
+        if r16
+          r17 = _nt_space_hard
+          s15 << r17
+          if r17
+            r18 = _nt_species
+            s15 << r18
+            if r18
+              r19 = _nt_space_hard
+              s15 << r19
+              if r19
+                r20 = _nt_infraspecies
+                s15 << r20
+              end
+            end
+          end
+        end
+        if s15.last
+          r15 = instantiate_node(SyntaxNode,input, i15...index, s15)
+          r15.extend(MultinomialName4)
+          r15.extend(MultinomialName5)
+        else
+          self.index = i15
+          r15 = nil
+        end
+        if r15
+          r0 = r15
+        else
+          i21, s21 = index, []
+          r22 = _nt_genus
+          s21 << r22
+          if r22
+            r23 = _nt_space_hard
+            s21 << r23
+            if r23
+              r24 = _nt_species
+              s21 << r24
+            end
+          end
+          if s21.last
+            r21 = instantiate_node(SyntaxNode,input, i21...index, s21)
+            r21.extend(MultinomialName6)
+            r21.extend(MultinomialName7)
+          else
+            self.index = i21
+            r21 = nil
+          end
+          if r21
+            r0 = r21
+          else
+            self.index = i0
+            r0 = nil
+          end
+        end
+      end
+    end
+
+    node_cache[:multinomial_name][start_index] = r0
+
+    return r0
+  end
+
+  module Infraspecies0
+    def a
+      elements[0]
+    end
+
+    def space
+      elements[1]
+    end
+
+    def b
+      elements[2]
+    end
+  end
+
+  module Infraspecies1
+    def value
+      a.value + " " + b.value
+    end
+
+    def canonical
+      a.canonical
+    end
+
+    def pos
+      a.pos.merge(b.pos)
+    end
+
+    def details
+      {:infraspecies => a.details[:infraspecies].merge(b.details)}
+    end
+  end
+
+  def _nt_infraspecies
+    start_index = index
+    if node_cache[:infraspecies].has_key?(index)
+      cached = node_cache[:infraspecies][index]
+      @index = cached.interval.end if cached
+      return cached
+    end
+
+    i0 = index
+    i1, s1 = index, []
+    r2 = _nt_infraspecies_epitheton
+    s1 << r2
+    if r2
+      r3 = _nt_space
+      s1 << r3
+      if r3
+        r4 = _nt_authorship
+        s1 << r4
+      end
+    end
+    if s1.last
+      r1 = instantiate_node(SyntaxNode,input, i1...index, s1)
+      r1.extend(Infraspecies0)
+      r1.extend(Infraspecies1)
+    else
+      self.index = i1
+      r1 = nil
+    end
+    if r1
+      r0 = r1
+    else
+      r5 = _nt_infraspecies_epitheton
+      if r5
+        r0 = r5
       else
         self.index = i0
         r0 = nil
       end
     end
 
-    node_cache[:multinomial_name][start_index] = r0
+    node_cache[:infraspecies][start_index] = r0
+
+    return r0
+  end
+
+  module InfraspeciesEpitheton0
+    def latin_word
+      elements[0]
+    end
+
+  end
+
+  module InfraspeciesEpitheton1
+    def value
+      text_value
+    end
+    
+    def canonical
+      value
+    end
+
+    def pos
+      {interval.begin => ['infraspecies', interval.end]}
+    end
+
+    def details
+      {:infraspecies => {:epitheton => value, :rank => 'n/a'}}
+    end
+  end
+
+  def _nt_infraspecies_epitheton
+    start_index = index
+    if node_cache[:infraspecies_epitheton].has_key?(index)
+      cached = node_cache[:infraspecies_epitheton][index]
+      @index = cached.interval.end if cached
+      return cached
+    end
+
+    i0, s0 = index, []
+    r1 = _nt_latin_word
+    s0 << r1
+    if r1
+      i2 = index
+      if input.index(Regexp.new('[\\.]'), index) == index
+        r3 = instantiate_node(SyntaxNode,input, index...(index + 1))
+        @index += 1
+      else
+        r3 = nil
+      end
+      if r3
+        r2 = nil
+      else
+        self.index = i2
+        r2 = instantiate_node(SyntaxNode,input, index...index)
+      end
+      s0 << r2
+    end
+    if s0.last
+      r0 = instantiate_node(SyntaxNode,input, i0...index, s0)
+      r0.extend(InfraspeciesEpitheton0)
+      r0.extend(InfraspeciesEpitheton1)
+    else
+      self.index = i0
+      r0 = nil
+    end
+
+    node_cache[:infraspecies_epitheton][start_index] = r0
 
     return r0
   end
@@ -181,7 +482,7 @@ module ScientificNameClean
       elements[0]
     end
 
-    def space_hard
+    def space
       elements[1]
     end
 
@@ -221,7 +522,7 @@ module ScientificNameClean
     r2 = _nt_species_epitheton
     s1 << r2
     if r2
-      r3 = _nt_space_hard
+      r3 = _nt_space
       s1 << r3
       if r3
         r4 = _nt_authorship
@@ -502,6 +803,34 @@ module ScientificNameClean
     return r0
   end
 
+  module Authorship0
+    def a
+      elements[0]
+    end
+
+    def space
+      elements[1]
+    end
+
+    def b
+      elements[2]
+    end
+  end
+
+  module Authorship1
+    def value
+      a.value + " " + b.value
+    end
+    
+    def pos
+      a.pos.merge(b.pos)
+    end
+    
+    def details
+      {:authorship => text_value, :combinationAuthorTeam => b.details_with_arg('combinationAuthorTeam')[:combinationAuthorTeam], :basionymAuthorTeam => a.details[:basionymAuthorTeam]}
+    end
+  end
+
   def _nt_authorship
     start_index = index
     if node_cache[:authorship].has_key?(index)
@@ -511,16 +840,39 @@ module ScientificNameClean
     end
 
     i0 = index
-    r1 = _nt_basionym_authorship_with_parenthesis
+    i1, s1 = index, []
+    r2 = _nt_basionym_authorship_with_parenthesis
+    s1 << r2
+    if r2
+      r3 = _nt_space
+      s1 << r3
+      if r3
+        r4 = _nt_simple_authorship
+        s1 << r4
+      end
+    end
+    if s1.last
+      r1 = instantiate_node(SyntaxNode,input, i1...index, s1)
+      r1.extend(Authorship0)
+      r1.extend(Authorship1)
+    else
+      self.index = i1
+      r1 = nil
+    end
     if r1
       r0 = r1
     else
-      r2 = _nt_simple_authorship
-      if r2
-        r0 = r2
+      r5 = _nt_basionym_authorship_with_parenthesis
+      if r5
+        r0 = r5
       else
-        self.index = i0
-        r0 = nil
+        r6 = _nt_simple_authorship
+        if r6
+          r0 = r6
+        else
+          self.index = i0
+          r0 = nil
+        end
       end
     end
 
@@ -601,6 +953,35 @@ module ScientificNameClean
       val = a.details
       val[:authorship] = text_value
       val      
+    end
+  end
+
+  module BasionymAuthorshipWithParenthesis4
+    def space
+      elements[1]
+    end
+
+    def a
+      elements[2]
+    end
+
+    def space
+      elements[3]
+    end
+
+  end
+
+  module BasionymAuthorshipWithParenthesis5
+    def value
+      "(?)"
+    end
+    
+    def pos
+      {a.interval.begin => ['unknown_author', a.interval.end]}
+    end
+    
+    def details
+      {:authorship => text_value, :basionymAuthorTeam => {:authorTeam => text_value, :author => ['?']}}
     end
   end
 
@@ -723,8 +1104,57 @@ module ScientificNameClean
       if r12
         r0 = r12
       else
-        self.index = i0
-        r0 = nil
+        i18, s18 = index, []
+        if input.index("(", index) == index
+          r19 = instantiate_node(SyntaxNode,input, index...(index + 1))
+          @index += 1
+        else
+          terminal_parse_failure("(")
+          r19 = nil
+        end
+        s18 << r19
+        if r19
+          r20 = _nt_space
+          s18 << r20
+          if r20
+            if input.index("?", index) == index
+              r21 = instantiate_node(SyntaxNode,input, index...(index + 1))
+              @index += 1
+            else
+              terminal_parse_failure("?")
+              r21 = nil
+            end
+            s18 << r21
+            if r21
+              r22 = _nt_space
+              s18 << r22
+              if r22
+                if input.index(")", index) == index
+                  r23 = instantiate_node(SyntaxNode,input, index...(index + 1))
+                  @index += 1
+                else
+                  terminal_parse_failure(")")
+                  r23 = nil
+                end
+                s18 << r23
+              end
+            end
+          end
+        end
+        if s18.last
+          r18 = instantiate_node(SyntaxNode,input, i18...index, s18)
+          r18.extend(BasionymAuthorshipWithParenthesis4)
+          r18.extend(BasionymAuthorshipWithParenthesis5)
+        else
+          self.index = i18
+          r18 = nil
+        end
+        if r18
+          r0 = r18
+        else
+          self.index = i0
+          r0 = nil
+        end
       end
     end
 
@@ -932,12 +1362,96 @@ module ScientificNameClean
       if r7
         r0 = r7
       else
-        self.index = i0
-        r0 = nil
+        r8 = _nt_unknown_auth
+        if r8
+          r0 = r8
+        else
+          self.index = i0
+          r0 = nil
+        end
       end
     end
 
     node_cache[:authors_names][start_index] = r0
+
+    return r0
+  end
+
+  module UnknownAuth0
+    def value
+      text_value
+    end
+    
+    def pos
+     {interval.begin => ['unknown_author', interval.end]}
+    end
+    
+    def details
+      {:author => ["unknown"]}
+    end
+  end
+
+  def _nt_unknown_auth
+    start_index = index
+    if node_cache[:unknown_auth].has_key?(index)
+      cached = node_cache[:unknown_auth][index]
+      @index = cached.interval.end if cached
+      return cached
+    end
+
+    i0 = index
+    if input.index("auct.", index) == index
+      r1 = instantiate_node(SyntaxNode,input, index...(index + 5))
+      @index += 5
+    else
+      terminal_parse_failure("auct.")
+      r1 = nil
+    end
+    if r1
+      r0 = r1
+      r0.extend(UnknownAuth0)
+    else
+      if input.index("hort.", index) == index
+        r2 = instantiate_node(SyntaxNode,input, index...(index + 5))
+        @index += 5
+      else
+        terminal_parse_failure("hort.")
+        r2 = nil
+      end
+      if r2
+        r0 = r2
+        r0.extend(UnknownAuth0)
+      else
+        if input.index("anon.", index) == index
+          r3 = instantiate_node(SyntaxNode,input, index...(index + 5))
+          @index += 5
+        else
+          terminal_parse_failure("anon.")
+          r3 = nil
+        end
+        if r3
+          r0 = r3
+          r0.extend(UnknownAuth0)
+        else
+          if input.index("ht.", index) == index
+            r4 = instantiate_node(SyntaxNode,input, index...(index + 3))
+            @index += 3
+          else
+            terminal_parse_failure("ht.")
+            r4 = nil
+          end
+          if r4
+            r0 = r4
+            r0.extend(UnknownAuth0)
+          else
+            self.index = i0
+            r0 = nil
+          end
+        end
+      end
+    end
+
+    node_cache[:unknown_auth][start_index] = r0
 
     return r0
   end

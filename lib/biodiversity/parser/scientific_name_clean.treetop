@@ -8,6 +8,24 @@ grammar ScientificNameClean
   end
   
   rule multinomial_name
+    a:genus space b:subgenus space c:species space_hard d:infraspecies {
+      def value
+        a.value + " " + b.value + " " + c.value + " " + d.value
+      end
+    
+      def canonical
+        a.canonical + " " + c.canonical + " " + d.canonical
+      end
+    
+      def pos
+        a.pos.merge(b.pos).merge(c.pos).merge(d.pos)
+      end
+    
+      def details
+        a.details.merge(b.details).merge(c.details).merge(d.details)
+      end
+    }
+    /  
     a:genus space b:subgenus space c:species {
       def value
         a.value + " " + b.value + " " + c.value
@@ -21,6 +39,24 @@ grammar ScientificNameClean
         a.pos.merge(b.pos).merge(c.pos)
       end
       
+      def details
+        a.details.merge(b.details).merge(c.details)
+      end
+    }
+    /
+    a:genus space_hard b:species space_hard c:infraspecies {
+      def value
+        a.value + " " + b.value + " " + c.value 
+      end
+
+      def canonical
+        a.canonical + " " + b.canonical + " " + c.canonical
+      end
+    
+      def pos
+        a.pos.merge(b.pos).merge(c.pos)
+      end
+    
       def details
         a.details.merge(b.details).merge(c.details)
       end
@@ -45,8 +81,51 @@ grammar ScientificNameClean
     }
   end
   
+  rule infraspecies
+    a:infraspecies_epitheton space b:authorship {
+      def value
+        a.value + " " + b.value
+      end
+  
+      def canonical
+        a.canonical
+      end
+  
+      def pos
+        a.pos.merge(b.pos)
+      end
+  
+      def details
+        {:infraspecies => a.details[:infraspecies].merge(b.details)}
+      end
+    }
+    /
+    infraspecies_epitheton
+  end
+  
+  rule infraspecies_epitheton
+    latin_word ![\.] {
+      def value
+        text_value
+      end
+      
+      def canonical
+        value
+      end
+  
+      def pos
+        {interval.begin => ['infraspecies', interval.end]}
+      end
+  
+      def details
+        {:infraspecies => {:epitheton => value, :rank => 'n/a'}}
+      end
+    }
+  end
+  
+  
   rule species
-    a:species_epitheton space_hard b:authorship {
+    a:species_epitheton space b:authorship {
       def value
         a.value + " " + b.value
       end
@@ -154,6 +233,20 @@ grammar ScientificNameClean
   end
   
   rule authorship
+    a:basionym_authorship_with_parenthesis space b:simple_authorship {
+      def value
+        a.value + " " + b.value
+      end
+      
+      def pos
+        a.pos.merge(b.pos)
+      end
+      
+      def details
+        {:authorship => text_value, :combinationAuthorTeam => b.details_with_arg('combinationAuthorTeam')[:combinationAuthorTeam], :basionymAuthorTeam => a.details[:basionymAuthorTeam]}
+      end
+    }
+    /
     basionym_authorship_with_parenthesis
     /
     simple_authorship
@@ -192,6 +285,20 @@ grammar ScientificNameClean
         val = a.details
         val[:authorship] = text_value
         val      
+      end
+    }
+    /
+    "(" space a:"?" space ")" {
+      def value
+        "(?)"
+      end
+      
+      def pos
+        {a.interval.begin => ['unknown_author', a.interval.end]}
+      end
+      
+      def details
+        {:authorship => text_value, :basionymAuthorTeam => {:authorTeam => text_value, :author => ['?']}}
       end
     }
   end
@@ -252,7 +359,28 @@ grammar ScientificNameClean
     }
     /
     author_name
-  end  
+    /
+    unknown_auth
+  end
+  
+  
+  rule unknown_auth
+    ("auct."/"hort."/"anon."/"ht.") {
+      def value
+        text_value
+      end
+      
+      def pos
+       {interval.begin => ['unknown_author', interval.end]}
+      end
+      
+      def details
+        {:author => ["unknown"]}
+      end
+    }
+  end
+  
+  
   
   rule author_separator
     ("&"/","/"and"/"et") {
