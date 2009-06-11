@@ -3,7 +3,33 @@ module ScientificNameClean
   include Treetop::Runtime
 
   def root
-    @root || :scientific_name
+    @root || :root
+  end
+
+  module Root0
+    def value
+      super.gsub(/\s{2,}/, ' ')
+    end
+    
+    def canonical
+      super.gsub(/\s{2,}/, ' ')
+    end
+  end
+
+  def _nt_root
+    start_index = index
+    if node_cache[:root].has_key?(index)
+      cached = node_cache[:root][index]
+      @index = cached.interval.end if cached
+      return cached
+    end
+
+    r0 = _nt_scientific_name
+    r0.extend(Root0)
+
+    node_cache[:root][start_index] = r0
+
+    return r0
   end
 
   def _nt_scientific_name
@@ -145,7 +171,7 @@ module ScientificNameClean
 
   module MultinomialName5
     def value
-      (a.value + " " + b.value + " " + c.value).gsub(/\s{2,}/, ' ') 
+      a.value + " " + b.value + " " + c.value 
     end
 
     def canonical

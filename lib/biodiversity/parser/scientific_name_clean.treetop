@@ -1,10 +1,23 @@
 # encoding: UTF-8
 grammar ScientificNameClean
 
+  rule root
+    scientific_name {
+      def value
+        super.gsub(/\s{2,}/, ' ')
+      end
+      
+      def canonical
+        super.gsub(/\s{2,}/, ' ')
+      end
+    }
+  end
+
   rule scientific_name
     multinomial_name
     /
     uninomial_name
+      
   end
   
   rule multinomial_name
@@ -46,7 +59,7 @@ grammar ScientificNameClean
     /
     a:genus space_hard b:species space_hard c:infraspecies {
       def value
-        (a.value + " " + b.value + " " + c.value).gsub(/\s{2,}/, ' ') 
+        a.value + " " + b.value + " " + c.value 
       end
 
       def canonical

@@ -240,6 +240,11 @@ describe ScientificNameClean do
     parse(sn).should_not be_nil
     details(sn).should == {:genus=>{:epitheton=>"Agalinis"}, :species=>{:epitheton=>"purpurea", :authorship=>"(L.) Briton", :combinationAuthorTeam=>{:authorTeam=>"Briton"}, :basionymAuthorTeam=>{:authorTeam=>"L.", :author=>["L."]}}, :infraspecies=>{:epitheton=>"borealis", :rank=>"var.", :authorship=>"(Berg.) Peterson 1987", :combinationAuthorTeam=>{:authorTeam=>"Peterson", :author=>["Peterson"], :year=>"1987"}, :basionymAuthorTeam=>{:authorTeam=>"Berg.", :author=>["Berg."]}}}
     pos(sn).should == {0=>["genus", 8], 9=>["species", 17], 19=>["author_word", 21], 23=>["author_word", 29], 35=>["infraspecies", 43], 45=>["author_word", 50], 52=>["author_word", 60], 61=>["year", 65]}
+    sn = "Phaeographis inusta var. macularis(Leight.) A.L. Sm. 1861"
+    parse(sn).should_not be_nil
+    value(sn).should == "Phaeographis inusta var. macularis (Leight.) A.L. Sm. 1861"
+    canonical(sn).should == "Phaeographis inusta macularis"
+    pos(sn).should == {0=>["genus", 12], 13=>["species", 19], 25=>["infraspecies", 34], 35=>["author_word", 42], 44=>["author_word", 48], 49=>["author_word", 52], 53=>["year", 57]}
   end
 
   it 'should parse unknown original authors (auct.)/(hort.)/(?)' do
@@ -259,6 +264,46 @@ describe ScientificNameClean do
     parse(sn).should_not be_nil
     pos(sn).should == {0=>["genus", 4], 5=>["species", 10], 11=>["unknown_author", 14]}
   end
+  
+  it 'shuould parse real world examples' do
+    sn = "Stagonospora polyspora M.T. Lucas & Sousa da Câmara 1934"
+    parse(sn).should_not be_nil
+    value(sn).should == "Stagonospora polyspora M.T. Lucas et Sousa da Câmara 1934"
+    details(sn).should == {:genus=>{:epitheton=>"Stagonospora"}, :species=>{:epitheton=>"polyspora", :authorship=>"M.T. Lucas & Sousa da Câmara 1934", :basionymAuthorTeam=>{:authorTeam=>"M.T. Lucas & Sousa da Câmara", :author=>["M.T. Lucas", "Sousa da Câmara"], :year=>"1934"}}}
+    pos(sn).should == {0=>["genus", 12], 13=>["species", 22], 23=>["author_word", 27], 28=>["author_word", 33], 36=>["author_word", 41], 42=>["author_word", 44], 45=>["author_word", 51], 52=>["year", 56]}
+    parse("Cladoniicola staurospora Diederich, van den Boom & Aptroot 2001").should_not be_nil
+    sn = "Yarrowia lipolytica var. lipolytica (Wick., Kurtzman & E.A. Herrm.) Van der Walt & Arx 1981"
+    parse(sn).should_not be_nil
+    value(sn).should == "Yarrowia lipolytica var. lipolytica (Wick., Kurtzman et E.A. Herrm.) Van der Walt et Arx 1981"
+    pos(sn).should == {0=>["genus", 8], 9=>["species", 19], 25=>["infraspecies", 35], 37=>["author_word", 42], 44=>["author_word", 52], 55=>["author_word", 59], 60=>["author_word", 66], 68=>["author_word", 71], 72=>["author_word", 75], 76=>["author_word", 80], 83=>["author_word", 86], 87=>["year", 91]}
+    parse("Physalospora rubiginosa (Fr.) anon.").should_not be_nil
+    parse("Pleurotus ëous (Berk.) Sacc. 1887").should_not be_nil
+    parse("Lecanora wetmorei Śliwa 2004").should_not be_nil
+    #   valid 
+    #   infraspecific
+    parse("Calicium furfuraceum * furfuraceum (L.) Pers. 1797").should_not be_nil
+    parse("Exobasidium vaccinii ** andromedae (P. Karst.) P. Karst. 1882").should_not be_nil
+    parse("Urceolaria scruposa **** clausa Flot. 1849").should_not be_nil
+    parse("Cortinarius angulatus B gracilescens Fr. 1838").should_not be_nil
+    parse("Cyathicula scelobelonium").should_not be_nil
+    #   single quote that did not show
+    #    parse("Phytophthora hedraiandra De Cock & Man in ?t Veld 2004"
+    #   Phthora vastatrix d?Hérelle 1909
+    #   author is exception
+    sn = "Tuber liui A S. Xu 1999"
+    parse(sn).should_not be_nil
+    details(sn).should == {:genus=>{:epitheton=>"Tuber"}, :species=>{:epitheton=>"liui", :authorship=>"A S. Xu 1999", :basionymAuthorTeam=>{:authorTeam=>"A S. Xu", :author=>["A S. Xu"], :year=>"1999"}}}
+    parse('Xylaria potentillae A S. Xu').should_not be_nil
+    parse("Agaricus squamula Berk. & M.A. Curtis 1860").should_not be_nil
+    parse("Peltula coriacea Büdel, Henssen & Wessels 1986").should_not be_nil
+    #had to add no dot rule for trinomials without a rank to make it to work
+    sn = "Saccharomyces drosophilae anon."
+    parse(sn).should_not be_nil
+    details(sn).should == {:genus=>{:epitheton=>"Saccharomyces"}, :species=>{:epitheton=>"drosophilae", :authorship=>"anon.", :basionymAuthorTeam=>{:authorTeam=>"anon.", :author=>["anon."]}}}
+    pos(sn).should == {0=>["genus", 13], 14=>["species", 25], 26=>["author_word", 31]}
+  end
+    
+  
   
    
     

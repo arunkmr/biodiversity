@@ -32,56 +32,8 @@ describe ScientificNameClean do
   end
   
   
-  it 'should parse species autonym for complex subspecies authorships' do
-    parse("Aus bus Linn. var. bus").should_not be_nil
-    details("Aus bus Linn. var. bus").should == {:genus=>"Aus", :species=>"bus", :subspecies=>[{:rank=>"var.", :value=>"bus"}], :species_authors=>{:authors=>{:names=>["Linn."]}}, :name_part_verbatim=>"Aus bus", :auth_part_verbatim=>"Linn. var. bus"}
-    sn = "Agalinis purpurea (L.) Briton var. borealis (Berg.) Peterson 1987"
-    parse(sn).should_not be_nil
-    details(sn).should == {:genus=>"Agalinis", :species=>"purpurea", :subspecies=>[{:rank=>"var.", :value=>"borealis"}], :species_authors=>{:orig_authors=>{:names=>["L."]}, :authors=>{:names=>["Briton"]}}, :subspecies_authors=>{:orig_authors=>{:names=>["Berg."]}, :authors=>{:names=>["Peterson"], :year=>"1987"}}, :name_part_verbatim=>"Agalinis purpurea", :auth_part_verbatim=>"(L.) Briton var. borealis (Berg.) Peterson 1987"}
-    pos(sn).should == {0=>["genus", 8], 9=>["species", 17], 19=>["author_word", 21], 23=>["author_word", 29], 35=>["subspecies", 43], 45=>["author_word", 50], 52=>["author_word", 60], 61=>["year", 65]}
-  end
   
   
-  
-  it 'shuould parse real world examples' do
-    sn = "Stagonospora polyspora M.T. Lucas & Sousa da Câmara 1934"
-    parse(sn).should_not be_nil
-    value(sn).should == "Stagonospora polyspora M.T. Lucas et Sousa da Câmara 1934"
-    details(sn).should == {:genus=>"Stagonospora", :species=>"polyspora", :authors=>{:names=>["M.T. Lucas", "Sousa da Câmara"], :year=>"1934"}, :name_part_verbatim=>"Stagonospora polyspora", :auth_part_verbatim=>"M.T. Lucas & Sousa da Câmara 1934"}
-    pos(sn).should == {0=>["genus", 12], 13=>["species", 22], 23=>["author_word", 27], 28=>["author_word", 33], 36=>["author_word", 41], 42=>["author_word", 44], 45=>["author_word", 51], 52=>["year", 56]}
-    parse("Cladoniicola staurospora Diederich, van den Boom & Aptroot 2001").should_not be_nil
-    sn = "Yarrowia lipolytica var. lipolytica (Wick., Kurtzman & E.A. Herrm.) Van der Walt & Arx 1981"
-    parse(sn).should_not be_nil
-    value(sn).should == "Yarrowia lipolytica var. lipolytica (Wick., Kurtzman et E.A. Herrm.) Van der Walt et Arx 1981"
-    pos(sn).should == {0=>["genus", 8], 9=>["species", 19], 25=>["subspecies", 35], 37=>["author_word", 42], 44=>["author_word", 52], 55=>["author_word", 59], 60=>["author_word", 66], 68=>["author_word", 71], 72=>["author_word", 75], 76=>["author_word", 80], 83=>["author_word", 86], 87=>["year", 91]}
-    parse("Physalospora rubiginosa (Fr.) anon.").should_not be_nil
-    parse("Pleurotus ëous (Berk.) Sacc. 1887").should_not be_nil
-    parse("Lecanora wetmorei Śliwa 2004").should_not be_nil
-    #   valid 
-    #   infraspecific
-    parse("Calicium furfuraceum * furfuraceum (L.) Pers. 1797").should_not be_nil
-    parse("Exobasidium vaccinii ** andromedae (P. Karst.) P. Karst. 1882").should_not be_nil
-    parse("Urceolaria scruposa **** clausa Flot. 1849").should_not be_nil
-    parse("Cortinarius angulatus B gracilescens Fr. 1838").should_not be_nil
-    parse("Cyathicula scelobelonium").should_not be_nil
-    #   single quote that did not show
-    #    parse("Phytophthora hedraiandra De Cock & Man in ?t Veld 2004"
-    #   Phthora vastatrix d?Hérelle 1909
-    #   author is exception
-    sn = "Tuber liui A S. Xu 1999"
-    parse(sn).should_not be_nil
-    details(sn).should == {:genus=>"Tuber", :species=>"liui", :authors=>{:names=>["A S. Xu"], :year=>"1999"}, :name_part_verbatim=>"Tuber liui", :auth_part_verbatim=>"A S. Xu 1999"}
-    pos(sn).should == {0=>["genus", 5], 6=>["species", 10], 11=>["author_word", 1], 13=>["author_word", 2], 16=>["author_word", 2], 19=>["year", 23]}
-    parse('Xylaria potentillae A S. Xu').should_not be_nil
-    parse("Agaricus squamula Berk. & M.A. Curtis 1860").should_not be_nil
-    parse("Peltula coriacea Büdel, Henssen & Wessels 1986").should_not be_nil
-    #had to add no dot rule for trinomials without a rank to make it to work
-    sn = "Saccharomyces drosophilae anon."
-    parse(sn).should_not be_nil
-    details(sn).should == {:genus=>"Saccharomyces", :species=>"drosophilae", :authors=>{:names=>["anon."]}, :name_part_verbatim=>"Saccharomyces drosophilae", :auth_part_verbatim=>"anon."}
-    pos(sn).should == {0=>["genus", 13], 14=>["species", 25], 26=>["author_word", 31]}
-  end
-    
 
   it 'should parse names with taxon concept sec. part' do
     sn = "Sténométope laevissimus sec. Eschmeyer 2004"
@@ -99,14 +51,6 @@ describe ScientificNameClean do
     # puts "</pre>"
   end
 
-  
-  it "should parse name with var." do
-    sn = "Phaeographis inusta var. macularis(Leight.) A.L. Sm. 1861"
-    parse(sn).should_not be_nil
-    value(sn).should == "Phaeographis inusta var. macularis (Leight.) A.L. Sm. 1861"
-    canonical(sn).should == "Phaeographis inusta macularis"
-    pos(sn).should == {0=>["genus", 12], 13=>["species", 19], 25=>["subspecies", 34], 35=>["author_word", 42], 44=>["author_word", 48], 49=>["author_word", 52], 53=>["year", 57]}
-  end
   
 it "should parse name with morph." do
   sn = "Callideriphus flavicollis morph. reductus Fuchs 1961"
