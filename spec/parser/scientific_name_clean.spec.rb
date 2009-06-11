@@ -225,25 +225,33 @@ describe ScientificNameClean do
     value(sn).should == "Hydnellum scrobiculatum zonatum (Banker) D. Hall et D.E. Stuntz 1972"
     canonical(sn).should == "Hydnellum scrobiculatum zonatum"
     details(sn).should == {:genus=>{:epitheton=>"Hydnellum"}, :species=>{:epitheton=>"scrobiculatum"}, :infraspecies=>{:epitheton=>"zonatum", :rank=>"n/a", :authorship=>"(Banker) D. Hall & D.E. Stuntz 1972", :combinationAuthorTeam=>{:authorTeam=>"D. Hall & D.E. Stuntz", :author=>["D. Hall", "D.E. Stuntz"], :year=>"1972"}, :basionymAuthorTeam=>{:authorTeam=>"Banker", :author=>["Banker"]}}}
-    pos(sn).should == {0=>["genus", 9], 10=>["species", 23], 24=>[{"subspecies"=>31}], 33=>["author_word", 39], 41=>["author_word", 43], 44=>["author_word", 48], 51=>["author_word", 55], 56=>["author_word", 62], 63=>["year", 67]}
+    pos(sn).should == {0=>["genus", 9], 10=>["species", 23], 24=>["infraspecies", 31], 33=>["author_word", 39], 41=>["author_word", 43], 44=>["author_word", 48], 51=>["author_word", 55], 56=>["author_word", 62], 63=>["year", 67]}
     sn = "Begonia pingbienensis angustior"
     parse(sn).should_not be_nil
-    details(sn).should == {:genus=>"Begonia", :species=>"pingbienensis", :subspecies=>{:rank=>"n/a", :value=>"angustior"}}
-    pos(sn).should == {0=>["genus", 7], 8=>["species", 21], 22=>[{"subspecies"=>31}]}
+    details(sn).should == {:genus=>{:epitheton=>"Begonia"}, :species=>{:epitheton=>"pingbienensis"}, :infraspecies=>{:epitheton=>"angustior", :rank=>"n/a"}}
+    pos(sn).should == {0=>["genus", 7], 8=>["species", 21], 22=>["infraspecies", 31]}
   end
 
-
+  it 'should parse infraspecies with rank' do
+    sn = "Aus bus Linn. var. bus"
+    parse(sn).should_not be_nil
+    details(sn).should == {:genus=>{:epitheton=>"Aus"}, :species=>{:epitheton=>"bus", :authorship=>"Linn.", :basionymAuthorTeam=>{:authorTeam=>"Linn.", :author=>["Linn."]}}, :infraspecies=>{:epitheton=>"bus", :rank=>"var."}}
+    sn = "Agalinis purpurea (L.) Briton var. borealis (Berg.) Peterson 1987"
+    parse(sn).should_not be_nil
+    details(sn).should == {:genus=>{:epitheton=>"Agalinis"}, :species=>{:epitheton=>"purpurea", :authorship=>"(L.) Briton", :combinationAuthorTeam=>{:authorTeam=>"Briton"}, :basionymAuthorTeam=>{:authorTeam=>"L.", :author=>["L."]}}, :infraspecies=>{:epitheton=>"borealis", :rank=>"var.", :authorship=>"(Berg.) Peterson 1987", :combinationAuthorTeam=>{:authorTeam=>"Peterson", :author=>["Peterson"], :year=>"1987"}, :basionymAuthorTeam=>{:authorTeam=>"Berg.", :author=>["Berg."]}}}
+    pos(sn).should == {0=>["genus", 8], 9=>["species", 17], 19=>["author_word", 21], 23=>["author_word", 29], 35=>["infraspecies", 43], 45=>["author_word", 50], 52=>["author_word", 60], 61=>["year", 65]}
+  end
 
   it 'should parse unknown original authors (auct.)/(hort.)/(?)' do
     sn = "Tragacantha leporina (?) Kuntze"
     parse(sn).should_not be_nil
     value(sn).should == "Tragacantha leporina (?) Kuntze"
     details(sn).should == {:genus=>{:epitheton=>"Tragacantha"}, :species=>{:epitheton=>"leporina", :authorship=>"(?) Kuntze", :combinationAuthorTeam=>{:authorTeam=>"Kuntze"}, :basionymAuthorTeam=>{:authorTeam=>"(?)", :author=>["?"]}}}
-    # sn = "Lachenalia tricolor var. nelsonii (auct.) Baker"
-    # parse(sn).should_not be_nil
-    # value(sn).should == "Lachenalia tricolor var. nelsonii (auct.) Baker"
-    # details(sn).should == {:genus=>"Lachenalia", :species=>"tricolor", :subspecies=>[{:rank=>"var.", :value=>"nelsonii"}], :orig_authors=>"unknown", :authors=>{:names=>["Baker"]}, :name_part_verbatim=>"Lachenalia tricolor var. nelsonii", :auth_part_verbatim=>"(auct.) Baker"}
-    # pos(sn).should == {0=>["genus", 10], 11=>["species", 19], 25=>["subspecies", 33], 35=>["unknown_author", 40], 42=>["author_word", 47]}
+    sn = "Lachenalia tricolor var. nelsonii (auct.) Baker"
+    parse(sn).should_not be_nil
+    value(sn).should == "Lachenalia tricolor var. nelsonii (auct.) Baker"
+    details(sn).should == {:genus=>{:epitheton=>"Lachenalia"}, :species=>{:epitheton=>"tricolor"}, :infraspecies=>{:epitheton=>"nelsonii", :rank=>"var.", :authorship=>"(auct.) Baker", :combinationAuthorTeam=>{:authorTeam=>"Baker"}, :basionymAuthorTeam=>{:authorTeam=>"auct.", :author=>["unknown"]}}}
+    pos(sn).should == {0=>["genus", 10], 11=>["species", 19], 25=>["infraspecies", 33], 35=>["unknown_author", 40], 42=>["author_word", 47]}
   end  
   
   it 'should parse unknown authors auct./anon./hort./ht.' do

@@ -46,7 +46,7 @@ grammar ScientificNameClean
     /
     a:genus space_hard b:species space_hard c:infraspecies {
       def value
-        a.value + " " + b.value + " " + c.value 
+        (a.value + " " + b.value + " " + c.value).gsub(/\s{2,}/, ' ') 
       end
 
       def canonical
@@ -104,6 +104,23 @@ grammar ScientificNameClean
   end
   
   rule infraspecies_epitheton
+    sel:rank space_hard a:latin_word {
+      def value 
+        sel.apply(a)
+      end
+      def canonical
+        sel.canonical(a)
+      end
+      
+      def pos
+        {a.interval.begin => ['infraspecies', a.interval.end]}
+      end
+    
+      def details
+        sel.details(a)
+      end
+    }
+    /
     latin_word ![\.] {
       def value
         text_value
@@ -123,6 +140,47 @@ grammar ScientificNameClean
     }
   end
   
+  rule rank
+    ("morph."/"f.sp."/"B"/"ssp."/"mut."/"pseudovar."/"sect."/"ser."/"var."/"subvar."/ "[var.]" /"subsp."/"subf."/"race"/"α" 
+    /"ββ"/"β"/"γ"/"δ"/"ε"/"φ"/"θ"/"μ"/"a."/"b."/"c."/"d."/"e."/"g."/"k."/"****"/"**"/"*")
+    {
+      def value
+        text_value.strip
+      end
+
+      def apply(a)
+        " " + text_value + " " + a.value
+      end
+
+      def canonical(a)
+        " " + a.value
+      end
+      
+      def details(a = nil)
+        {:infraspecies => {:epitheton => (a.value rescue nil), :rank => text_value}}
+      end
+    }
+    /
+    rank_forma
+  end
+  
+  rule rank_forma
+    ("forma"/"form."/"fo."/"f.")
+    {
+      def value
+        "f."
+      end
+      def apply(a)
+        " " + value + " " + a.value
+      end
+      def canonical(a)
+        " " + a.value
+      end
+      def details(a = nil)
+        {:infraspecies => {:epitheton => (a.value rescue nil), :rank => value}}
+      end
+    }
+  end
   
   rule species
     a:species_epitheton space b:authorship {
