@@ -504,7 +504,7 @@ grammar ScientificNameClean
       end
     }
     /
-    ("anon."/"f."/"bis"/"arg."/"da"/"der"/"den"/"de"/"du"/"la"/"ter"/"van"/"et al.\{\?\}"/"et al.") {
+    ("anon."/"f."/"bis"/"arg."/author_prefix_word/"et al.\{\?\}"/"et al.") {
       def value
         text_value.strip
       end
@@ -532,6 +532,10 @@ grammar ScientificNameClean
         {:author => [value]}
       end
     }
+  end
+  
+  rule author_prefix_word
+    "da"/"der"/"den"/"de"/"du"/"la"/"ter"/"van"/"von" 
   end
   
   rule cap_latin_word
