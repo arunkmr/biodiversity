@@ -134,32 +134,7 @@ grammar ScientificNameClean
     name_part
   end
   
-  rule status_part
-    a:status_word space b:status_part {
-      def value
-        a.value + " " + b.value
-      end
-      def details
-        {:status => value}
-      end
-    }
-    /
-    status_word
-  end
-  
-  rule status_word
-    latin_word [\.] {
-      def value
-        text_value.strip
-      end
-      def details
-        {:status => value}
-      end
-    }
-    /
-    latin_word
-  end
-  
+
   rule name_part_authors_mix
     a:species_name space b:authors_part space c:subspecies_name space d:authors_part {
       def value

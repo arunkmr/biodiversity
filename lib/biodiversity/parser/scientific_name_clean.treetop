@@ -2,7 +2,7 @@
 grammar ScientificNameClean
 
   rule root
-    scientific_name {
+    scientific_name_2 {
       def value
         super.gsub(/\s{2,}/, ' ')
       end
@@ -12,13 +12,62 @@ grammar ScientificNameClean
       end
     }
   end
+  
+  rule scientific_name_2
+    a:scientific_name_1 space b:status_part {
+      def value
+        a.value + " " + b.value
+      end
+      
+      def canonical
+        a.canonical
+      end
+      
+      def pos
+        a.pos
+      end
+      
+      def details
+        a.details.merge(b.details)
+      end
+    }
+    /
+    scientific_name_1
+  end
 
-  rule scientific_name
+  rule scientific_name_1
     multinomial_name
     /
-    uninomial_name
-      
+    uninomial_name  
   end
+  
+  
+  rule status_part
+    a:status_word space b:status_part {
+      def value
+        a.value + " " + b.value
+      end
+      def details
+        {:status => value}
+      end
+    }
+    /
+    status_word
+  end
+  
+  rule status_word
+    latin_word [\.] {
+      def value
+        text_value.strip
+      end
+      def details
+        {:status => value}
+      end
+    }
+    /
+    latin_word
+  end
+  
   
   rule multinomial_name
     a:genus space b:subgenus space c:species space_hard d:infraspecies {
@@ -117,7 +166,7 @@ grammar ScientificNameClean
   end
   
   rule infraspecies_epitheton
-    sel:rank space_hard a:latin_word {
+    sel:rank space_hard a:species_word {
       def value 
         sel.apply(a)
       end
@@ -134,7 +183,7 @@ grammar ScientificNameClean
       end
     }
     /
-    latin_word ![\.] {
+    species_word ![\.] {
       def value
         text_value
       end
@@ -154,7 +203,7 @@ grammar ScientificNameClean
   end
   
   rule rank
-    ("morph."/"f.sp."/"B"/"ssp."/"mut."/"pseudovar."/"sect."/"ser."/"var."/"subvar."/ "[var.]" /"subsp."/"subf."/"race"/"α" 
+    ("morph."/"f.sp."/"B"/"ssp."/"mut."/"nat"/"pseudovar."/"sect."/"ser."/"var."/"subvar."/ "[var.]" /"subsp."/"subf."/"race"/"α" 
     /"ββ"/"β"/"γ"/"δ"/"ε"/"φ"/"θ"/"μ"/"a."/"b."/"c."/"d."/"e."/"g."/"k."/"****"/"**"/"*")
     {
       def value
@@ -218,15 +267,33 @@ grammar ScientificNameClean
   end
   
   rule species_epitheton
-    latin_word {
+    a:species_word &(space_hard author_prefix_word space_hard) {
+      def value 
+        a.value
+      end
+      
       def canonical
-        value
+        a.value
       end
     
       def pos
-        {interval.begin => ['species', interval.end]}
+        {a.interval.begin => ['species', a.interval.end]}
       end
     
+      def details
+        {:species => {:epitheton => a.value}}
+      end
+    }
+    /
+    species_word {
+      def canonical
+        value
+      end
+      
+      def pos
+        {interval.begin => ['species', interval.end]}
+      end
+      
       def details
         {:species => {:epitheton => value}}
       end
@@ -304,6 +371,22 @@ grammar ScientificNameClean
   end
   
   rule authorship
+    a:basionym_authorship_with_parenthesis space b:simple_authorship space c:ex_authorship {
+      def value
+        a.value + " " + b.value + " " + c.value
+      end
+      
+      def pos
+        a.pos.merge(b.pos).merge(c.pos)
+      end
+      
+      def details
+        val = {:authorship => text_value.strip, :combinationAuthorTeam => b.details_with_arg('combinationAuthorTeam')[:combinationAuthorTeam], :basionymAuthorTeam => a.details[:basionymAuthorTeam]}
+        val[:combinationAuthorTeam].merge!(c.details)
+        val
+      end
+    }
+    /
     a:basionym_authorship_with_parenthesis space b:simple_authorship {
       def value
         a.value + " " + b.value
@@ -314,11 +397,28 @@ grammar ScientificNameClean
       end
       
       def details
-        {:authorship => text_value, :combinationAuthorTeam => b.details_with_arg('combinationAuthorTeam')[:combinationAuthorTeam], :basionymAuthorTeam => a.details[:basionymAuthorTeam]}
+        {:authorship => text_value.strip, :combinationAuthorTeam => b.details_with_arg('combinationAuthorTeam')[:combinationAuthorTeam], :basionymAuthorTeam => a.details[:basionymAuthorTeam]}
       end
     }
     /
     basionym_authorship_with_parenthesis
+    /
+    a:simple_authorship space b:ex_authorship {
+      def value
+        a.value + " " + b.value
+      end
+      
+      def pos
+        a.pos.merge(b.pos)
+      end
+      
+      def details
+        val = a.details
+        val[:authorship] = text_value.strip
+        val[:basionymAuthorTeam].merge!(b.details)
+        val
+      end
+    }
     /
     simple_authorship
   end
@@ -331,16 +431,31 @@ grammar ScientificNameClean
       end
       
       def pos
-        a.pos.merge(b.pos)
+       a.pos.merge(b.pos)
       end 
       
       def details
         { :authorship => text_value, 
-          :basionymAuthorTeam => {
-            :authorTeam => a.text_value
-          }.merge(a.details).merge(b.details)
-        }      
-      end    
+          :basionymAuthorTeam => {:author_team => text_value}.merge(a.details).merge(b.details)          
+          }
+      end
+    }
+    /
+    "(" space a:simple_authorship space b:ex_authorship space ")" {
+      def value
+        "(" + a.value + " " + b.value + ")"
+      end
+      
+      def pos
+        a.pos.merge(b.pos)
+      end
+      
+      def details
+        val = a.details
+        val[:basionymAuthorTeam].merge!(b.details)
+        val[:authorship] = text_value.strip
+        val
+      end
     }
     /
     "(" space a:simple_authorship space ")" {
@@ -373,6 +488,24 @@ grammar ScientificNameClean
       end
     }
   end
+  
+  rule ex_authorship
+    a:ex_sep space b:simple_authorship {
+      def value
+        " ex " + b.value
+      end
+      
+      def pos
+        b.pos
+      end
+      
+      def details
+        val = {:exAuthorTeam => {:authorTeam => b.text_value.strip}.merge(b.details[:basionymAuthorTeam])}
+        val
+      end
+    } 
+  end
+  
 
   rule simple_authorship
     a:authors_names space [,]? space b:year {
@@ -451,7 +584,9 @@ grammar ScientificNameClean
     }
   end
   
-  
+  rule ex_sep
+    ("ex"/"in")
+  end
   
   rule author_separator
     ("&"/","/"and"/"et") {
@@ -472,6 +607,20 @@ grammar ScientificNameClean
   end
   
   rule author_name
+    space a:author_prefix_word space b:author_name space {
+      def value
+        a.value + " " + b.value
+      end
+      
+      def pos
+        a.pos.merge(b.pos)
+      end
+      
+      def details
+        {:author => [value]}
+      end
+    }
+    /
     space a:author_word space b:author_name space {
       def value
         a.value + " " + b.value
@@ -504,7 +653,7 @@ grammar ScientificNameClean
       end
     }
     /
-    ("anon."/"f."/"bis"/"arg."/author_prefix_word/"et al.\{\?\}"/"et al.") {
+    ("bis"/"arg."/"et al.\{\?\}"/"et al.") {
       def value
         text_value.strip
       end
@@ -532,10 +681,21 @@ grammar ScientificNameClean
         {:author => [value]}
       end
     }
+    /
+    author_prefix_word
   end
   
   rule author_prefix_word
-    "da"/"der"/"den"/"de"/"du"/"la"/"ter"/"van"/"von" 
+    space ("da"/"der"/"den"/"de"/"du"/"la"/"ter"/"van"/"von") &space_hard {
+      def value
+        text_value
+      end
+      
+      def pos
+        #cheating because there are several words in some of them
+        {interval.begin => ['author_word', interval.end]}
+      end
+    }
   end
   
   rule cap_latin_word
@@ -556,6 +716,16 @@ grammar ScientificNameClean
         text_value
       end
     }
+  end
+  
+  rule species_word
+    a:[0-9]+ "-"? b:latin_word {
+      def value
+        a.text_value + "-" + b.value
+      end
+    }
+    /
+    latin_word
   end
 
   rule latin_word
