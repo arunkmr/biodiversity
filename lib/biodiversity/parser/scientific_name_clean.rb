@@ -7,12 +7,34 @@ module ScientificNameClean
   end
 
   module Root0
+    def space
+      elements[0]
+    end
+
+    def a
+      elements[1]
+    end
+
+    def space
+      elements[2]
+    end
+  end
+
+  module Root1
     def value
-      super.gsub(/\s{2,}/, ' ')
+      a.value.gsub(/\s{2,}/, ' ')
     end
     
     def canonical
-      super.gsub(/\s{2,}/, ' ')
+      a.canonical.gsub(/\s{2,}/, ' ')
+    end
+    
+    def pos
+      a.pos
+    end
+    
+    def details
+      a.details
     end
   end
 
@@ -24,8 +46,25 @@ module ScientificNameClean
       return cached
     end
 
-    r0 = _nt_scientific_name_3
-    r0.extend(Root0)
+    i0, s0 = index, []
+    r1 = _nt_space
+    s0 << r1
+    if r1
+      r2 = _nt_scientific_name_3
+      s0 << r2
+      if r2
+        r3 = _nt_space
+        s0 << r3
+      end
+    end
+    if s0.last
+      r0 = instantiate_node(SyntaxNode,input, i0...index, s0)
+      r0.extend(Root0)
+      r0.extend(Root1)
+    else
+      self.index = i0
+      r0 = nil
+    end
 
     node_cache[:root][start_index] = r0
 
@@ -53,6 +92,10 @@ module ScientificNameClean
     
     def canonical
       b.canonical
+    end
+    
+    def pos
+      b.pos
     end
     
     def details
@@ -1565,8 +1608,13 @@ module ScientificNameClean
       if r8
         r0 = r8
       else
-        self.index = i0
-        r0 = nil
+        r9 = _nt_species_word_hybrid
+        if r9
+          r0 = r9
+        else
+          self.index = i0
+          r0 = nil
+        end
       end
     end
 
@@ -2367,7 +2415,7 @@ module ScientificNameClean
   end
 
   module ExAuthorship0
-    def a
+    def ex_sep
       elements[0]
     end
 
@@ -2721,6 +2769,9 @@ module ScientificNameClean
     return r0
   end
 
+  module ExSep0
+  end
+
   def _nt_ex_sep
     start_index = index
     if node_cache[:ex_sep].has_key?(index)
@@ -2729,30 +2780,55 @@ module ScientificNameClean
       return cached
     end
 
-    i0 = index
+    i0, s0 = index, []
+    i1 = index
     if input.index("ex", index) == index
-      r1 = instantiate_node(SyntaxNode,input, index...(index + 2))
+      r2 = instantiate_node(SyntaxNode,input, index...(index + 2))
       @index += 2
     else
       terminal_parse_failure("ex")
-      r1 = nil
+      r2 = nil
     end
-    if r1
-      r0 = r1
+    if r2
+      r1 = r2
     else
       if input.index("in", index) == index
-        r2 = instantiate_node(SyntaxNode,input, index...(index + 2))
+        r3 = instantiate_node(SyntaxNode,input, index...(index + 2))
         @index += 2
       else
         terminal_parse_failure("in")
-        r2 = nil
+        r3 = nil
       end
-      if r2
-        r0 = r2
+      if r3
+        r1 = r3
       else
-        self.index = i0
-        r0 = nil
+        self.index = i1
+        r1 = nil
       end
+    end
+    s0 << r1
+    if r1
+      i4 = index
+      if input.index(Regexp.new('[\\s]'), index) == index
+        r5 = instantiate_node(SyntaxNode,input, index...(index + 1))
+        @index += 1
+      else
+        r5 = nil
+      end
+      if r5
+        self.index = i4
+        r4 = instantiate_node(SyntaxNode,input, index...index)
+      else
+        r4 = nil
+      end
+      s0 << r4
+    end
+    if s0.last
+      r0 = instantiate_node(SyntaxNode,input, i0...index, s0)
+      r0.extend(ExSep0)
+    else
+      self.index = i0
+      r0 = nil
     end
 
     node_cache[:ex_sep][start_index] = r0
@@ -3841,6 +3917,200 @@ module ScientificNameClean
     return r0
   end
 
+  module SpeciesWordHybrid0
+    def a
+      elements[0]
+    end
+
+    def space
+      elements[1]
+    end
+
+    def b
+      elements[2]
+    end
+  end
+
+  module SpeciesWordHybrid1
+    def value
+      a.value + " " + b.value
+    end
+    
+    def canonical
+      b.value
+    end
+    
+    def pos
+      {b.interval.begin => ['species', b.interval.end]}
+    end
+    
+    def details
+      {:species => {:epitheton => b.value, :namedHybrid => true}}
+    end
+  end
+
+  module SpeciesWordHybrid2
+    def a
+      elements[0]
+    end
+
+    def space
+      elements[1]
+    end
+
+    def b
+      elements[2]
+    end
+  end
+
+  module SpeciesWordHybrid3
+    def value
+      "x " + b.value
+    end
+    
+    def canonical
+      b.value
+    end
+    
+    def pos
+      {b.interval.begin => ['species', b.interval.end]}
+    end
+    
+    def details
+      {:species => {:epitheton => b.value, :namedHybrid => true}}
+    end
+  end
+
+  module SpeciesWordHybrid4
+    def a
+      elements[0]
+    end
+
+    def space_hard
+      elements[1]
+    end
+
+    def b
+      elements[2]
+    end
+  end
+
+  module SpeciesWordHybrid5
+    def value
+      "x " + b.value
+    end
+    
+    def canonical
+      b.value
+    end
+    
+    def pos
+      {b.interval.begin => ['species', b.interval.end]}
+    end
+    
+    def details
+      {:species => {:epitheton => b.value, :namedHybrid => true}}
+    end
+  end
+
+  def _nt_species_word_hybrid
+    start_index = index
+    if node_cache[:species_word_hybrid].has_key?(index)
+      cached = node_cache[:species_word_hybrid][index]
+      @index = cached.interval.end if cached
+      return cached
+    end
+
+    i0 = index
+    i1, s1 = index, []
+    r2 = _nt_multiplication_sign
+    s1 << r2
+    if r2
+      r3 = _nt_space
+      s1 << r3
+      if r3
+        r4 = _nt_species_word
+        s1 << r4
+      end
+    end
+    if s1.last
+      r1 = instantiate_node(SyntaxNode,input, i1...index, s1)
+      r1.extend(SpeciesWordHybrid0)
+      r1.extend(SpeciesWordHybrid1)
+    else
+      self.index = i1
+      r1 = nil
+    end
+    if r1
+      r0 = r1
+    else
+      i5, s5 = index, []
+      if input.index("X", index) == index
+        r6 = instantiate_node(SyntaxNode,input, index...(index + 1))
+        @index += 1
+      else
+        terminal_parse_failure("X")
+        r6 = nil
+      end
+      s5 << r6
+      if r6
+        r7 = _nt_space
+        s5 << r7
+        if r7
+          r8 = _nt_species_word
+          s5 << r8
+        end
+      end
+      if s5.last
+        r5 = instantiate_node(SyntaxNode,input, i5...index, s5)
+        r5.extend(SpeciesWordHybrid2)
+        r5.extend(SpeciesWordHybrid3)
+      else
+        self.index = i5
+        r5 = nil
+      end
+      if r5
+        r0 = r5
+      else
+        i9, s9 = index, []
+        if input.index("x", index) == index
+          r10 = instantiate_node(SyntaxNode,input, index...(index + 1))
+          @index += 1
+        else
+          terminal_parse_failure("x")
+          r10 = nil
+        end
+        s9 << r10
+        if r10
+          r11 = _nt_space_hard
+          s9 << r11
+          if r11
+            r12 = _nt_species_word
+            s9 << r12
+          end
+        end
+        if s9.last
+          r9 = instantiate_node(SyntaxNode,input, i9...index, s9)
+          r9.extend(SpeciesWordHybrid4)
+          r9.extend(SpeciesWordHybrid5)
+        else
+          self.index = i9
+          r9 = nil
+        end
+        if r9
+          r0 = r9
+        else
+          self.index = i0
+          r0 = nil
+        end
+      end
+    end
+
+    node_cache[:species_word_hybrid][start_index] = r0
+
+    return r0
+  end
+
   module SpeciesWord0
     def a
       elements[0]
@@ -4271,6 +4541,34 @@ module ScientificNameClean
     return r0
   end
 
+  module Year0
+    def b
+      elements[0]
+    end
+
+    def a
+      elements[1]
+    end
+
+    def c
+      elements[2]
+    end
+  end
+
+  module Year1
+    def value
+      a.value
+    end
+    
+    def pos
+      a.pos
+    end
+    
+    def details
+      a.details
+    end
+  end
+
   def _nt_year
     start_index = index
     if node_cache[:year].has_key?(index)
@@ -4280,16 +4578,63 @@ module ScientificNameClean
     end
 
     i0 = index
-    r1 = _nt_year_number_with_character
+    i1, s1 = index, []
+    if input.index("(", index) == index
+      r2 = instantiate_node(SyntaxNode,input, index...(index + 1))
+      @index += 1
+    else
+      terminal_parse_failure("(")
+      r2 = nil
+    end
+    s1 << r2
+    if r2
+      i3 = index
+      r4 = _nt_year_number_with_character
+      if r4
+        r3 = r4
+      else
+        r5 = _nt_year_number
+        if r5
+          r3 = r5
+        else
+          self.index = i3
+          r3 = nil
+        end
+      end
+      s1 << r3
+      if r3
+        if input.index(")", index) == index
+          r6 = instantiate_node(SyntaxNode,input, index...(index + 1))
+          @index += 1
+        else
+          terminal_parse_failure(")")
+          r6 = nil
+        end
+        s1 << r6
+      end
+    end
+    if s1.last
+      r1 = instantiate_node(SyntaxNode,input, i1...index, s1)
+      r1.extend(Year0)
+      r1.extend(Year1)
+    else
+      self.index = i1
+      r1 = nil
+    end
     if r1
       r0 = r1
     else
-      r2 = _nt_year_number
-      if r2
-        r0 = r2
+      r7 = _nt_year_number_with_character
+      if r7
+        r0 = r7
       else
-        self.index = i0
-        r0 = nil
+        r8 = _nt_year_number
+        if r8
+          r0 = r8
+        else
+          self.index = i0
+          r0 = nil
+        end
       end
     end
 

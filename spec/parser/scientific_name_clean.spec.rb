@@ -98,6 +98,10 @@ describe ScientificNameClean do
     details(sn).should == {:genus=>{:epitheton=>"Platypus"}, :species=>{:epitheton=>"bicaudatulus", :authorship=>"Schedl, 1935h", :basionymAuthorTeam=>{:authorTeam=>"Schedl", :author=>["Schedl"], :year=>"1935"}}}
     pos(sn).should == {0=>["genus", 8], 9=>["species", 21], 22=>["author_word", 28], 30=>["year", 35]}
     parse("Platypus bicaudatulus Schedl, 1935B").should_not be_nil
+    sn = "Platypus bicaudatulus Schedl (1935h)"
+    parse(sn).should_not be_nil
+    details(sn).should == {:genus=>{:epitheton=>"Platypus"}, :species=>{:epitheton=>"bicaudatulus", :authorship=>"Schedl (1935h)", :basionymAuthorTeam=>{:authorTeam=>"Schedl", :author=>["Schedl"], :year=>"1935"}}}
+    parse("Platypus bicaudatulus Schedl 1935").should_not be_nil
   end
   
   it 'should parse genus with "?"' do
@@ -414,15 +418,21 @@ describe ScientificNameClean do
       parse(res[0]).should_not be_nil
       details(res[0]).should == res[1]
     end
-    
-    
-    #Asplenium X inexpectatum (E.L. Braun 1940) Morton 1956	this is taken from botanical tokyo code 
-    #Mentha ×smithiana R. A. Graham (1949)
-    #Salix ×capreola Andersson (1867)
-    #Salix xcapreola A. Kern. ex Andersson
-    #Salix x capreola Andersson
+   [ 
+    ['Asplenium X inexpectatum (E.L. Braun 1940) Morton (1956)',{:genus=>{:epitheton=>"Asplenium"}, :species=>{:epitheton=>"inexpectatum", :namedHybrid=>true, :authorship=>"(E.L. Braun 1940) Morton (1956)", :combinationAuthorTeam=>{:authorTeam=>"Morton", :author=>["Morton"], :year=>"1956"}, :basionymAuthorTeam=>{:authorTeam=>"E.L. Braun", :author=>["E.L. Braun"], :year=>"1940"}}}],
+    ['Mentha ×smithiana R. A. Graham 1949',{:genus=>{:epitheton=>"Mentha"}, :species=>{:epitheton=>"smithiana", :namedHybrid=>true, :authorship=>"R. A. Graham 1949", :basionymAuthorTeam=>{:authorTeam=>"R. A. Graham", :author=>["R. A. Graham"], :year=>"1949"}}}],
+    ['Salix ×capreola Andersson (1867)',{:genus=>{:epitheton=>"Salix"}, :species=>{:epitheton=>"capreola", :namedHybrid=>true, :authorship=>"Andersson (1867)", :basionymAuthorTeam=>{:authorTeam=>"Andersson", :author=>["Andersson"], :year=>"1867"}}}],
+    ['Salix x capreola Andersson',{:genus=>{:epitheton=>"Salix"}, :species=>{:epitheton=>"capreola", :namedHybrid=>true, :authorship=>"Andersson", :basionymAuthorTeam=>{:authorTeam=>"Andersson", :author=>["Andersson"]}}}]
+   ].each do |res|
+      parse(res[0]).should_not be_nil
+      details(res[0]).should == res[1]
+   end
   end
   
+  
+  it 'should parse names with spaces at the start and the end' do
+    parse("   Asplenium X inexpectatum (E.L. Braun 1940) Morton (1956)   ").should_not be_nil
+  end
   
   it 'should not parse serveral authors groups with several years NOT CORRECT' do
     parse("Pseudocercospora dendrobii (H.C. Burnett 1883) (Leight.) (Movss. 1967) U. Braun & Crous 2003").should be_nil

@@ -29,16 +29,21 @@ class ScientificNameParser
           :normalized => self.value,
           :canonical => self.canonical
           })
-        res.merge!(self.details)
+        data = self.details
+        if data[:species] && data[:species][:namedHybrid]
+          data[:species].delete(:namedHybrid)
+          data = {:namedHybrid => data}
+        end
+        res.merge!(data)
       end
       res = {:scientificName => res}
       JSON.generate res
     end
+    
     def @parser.pos_json
       JSON.generate self.pos rescue ''
     end
     @parser
   end
-
 end
 

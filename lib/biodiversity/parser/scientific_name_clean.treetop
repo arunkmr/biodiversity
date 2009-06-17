@@ -2,13 +2,21 @@
 grammar ScientificNameClean
 
   rule root
-    scientific_name_3 {
+    space a:scientific_name_3 space {
       def value
-        super.gsub(/\s{2,}/, ' ')
+        a.value.gsub(/\s{2,}/, ' ')
       end
       
       def canonical
-        super.gsub(/\s{2,}/, ' ')
+        a.canonical.gsub(/\s{2,}/, ' ')
+      end
+      
+      def pos
+        a.pos
+      end
+      
+      def details
+        a.details
       end
     }
   end
@@ -21,6 +29,10 @@ grammar ScientificNameClean
       
       def canonical
         b.canonical
+      end
+      
+      def pos
+        b.pos
       end
       
       def details
@@ -316,6 +328,8 @@ grammar ScientificNameClean
         {:species => {:epitheton => value}}
       end
     }
+    /
+    species_word_hybrid
   end
   
   rule subgenus
@@ -508,7 +522,7 @@ grammar ScientificNameClean
   end
   
   rule ex_authorship
-    a:ex_sep space b:simple_authorship {
+    ex_sep space b:simple_authorship {
       def value
         " ex " + b.value
       end
@@ -603,7 +617,7 @@ grammar ScientificNameClean
   end
   
   rule ex_sep
-    ("ex"/"in")
+    ("ex"/"in") &[\s]
   end
   
   rule author_separator
@@ -735,6 +749,62 @@ grammar ScientificNameClean
       end
     }
   end
+
+  rule species_word_hybrid
+    a:multiplication_sign space b:species_word {
+      def value
+        a.value + " " + b.value
+      end
+      
+      def canonical
+        b.value
+      end
+      
+      def pos
+        {b.interval.begin => ['species', b.interval.end]}
+      end
+      
+      def details
+        {:species => {:epitheton => b.value, :namedHybrid => true}}
+      end
+    }
+    /
+    a:"X" space b:species_word {
+      def value
+        "x " + b.value
+      end
+      
+      def canonical
+        b.value
+      end
+      
+      def pos
+        {b.interval.begin => ['species', b.interval.end]}
+      end
+      
+      def details
+        {:species => {:epitheton => b.value, :namedHybrid => true}}
+      end
+    }
+    /
+    a:"x" space_hard b:species_word {
+      def value
+        "x " + b.value
+      end
+      
+      def canonical
+        b.value
+      end
+      
+      def pos
+        {b.interval.begin => ['species', b.interval.end]}
+      end
+      
+      def details
+        {:species => {:epitheton => b.value, :namedHybrid => true}}
+      end
+    }
+  end
   
   rule species_word
     a:[0-9]+ "-"? b:latin_word {
@@ -813,6 +883,20 @@ grammar ScientificNameClean
   end
 
   rule year
+    b:"(" a:(year_number_with_character/year_number) c:")" {
+      def value
+        a.value
+      end
+      
+      def pos
+        a.pos
+      end
+      
+      def details
+        a.details
+      end 
+    }
+    /
     year_number_with_character
     /
     year_number
