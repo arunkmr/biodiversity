@@ -914,15 +914,21 @@ grammar ScientificNameClean
    end
    
   rule hybrid_separator
-    ("x"/"X"/"×") {
+    ("x"/"X") {
       def value
         "x"
       end
-      def details
-        {}
+    }
+    /
+    multiplication_sign
+  end
+  
+  rule multiplication_sign
+    "×" {
+      def value
+        text_value
       end
     }
-  end
   
   rule year
     year_with_character

@@ -2,7 +2,7 @@
 grammar ScientificNameClean
 
   rule root
-    scientific_name_2 {
+    scientific_name_3 {
       def value
         super.gsub(/\s{2,}/, ' ')
       end
@@ -11,6 +11,24 @@ grammar ScientificNameClean
         super.gsub(/\s{2,}/, ' ')
       end
     }
+  end
+  
+  rule scientific_name_3
+    a:hybrid_character space b:scientific_name_2 {
+      def  value
+        a.value + " " + b.value
+      end
+      
+      def canonical
+        b.canonical
+      end
+      
+      def details
+        {:namedHybrid => b.details}
+      end
+    }
+    /
+    scientific_name_2
   end
   
   rule scientific_name_2
@@ -828,6 +846,24 @@ grammar ScientificNameClean
       
       def details
         {:year => value}
+      end
+    }
+  end
+  
+  rule hybrid_character
+    ("x"/"X") {
+      def value
+        "x"
+      end
+    }
+    /
+    multiplication_sign
+  end
+  
+  rule multiplication_sign
+    "×" {
+      def value
+        text_value
       end
     }
   end

@@ -397,6 +397,33 @@ describe ScientificNameClean do
     pos(sn).should == {0=>["genus", 10], 11=>["species", 21], 23=>["author_word", 33], 35=>["author_word", 43], 48=>["author_word", 56], 60=>["author_word", 68], 69=>["year", 73]}
   end
   
+  it 'should parse named hybrids' do
+    [
+      ["×Agropogon P. Fourn. 1934", {:namedHybrid=>{:uninomial=>{:epitheton=>"Agropogon", :authorship=>"P. Fourn. 1934", :basionymAuthorTeam=>{:authorTeam=>"P. Fourn.", :author=>["P. Fourn."], :year=>"1934"}}}}],
+      ["xAgropogon P. Fourn.", {:namedHybrid=>{:uninomial=>{:epitheton=>"Agropogon", :authorship=>"P. Fourn.", :basionymAuthorTeam=>{:authorTeam=>"P. Fourn.", :author=>["P. Fourn."]}}}}],
+      ["XAgropogon P.Fourn.", {:namedHybrid=>{:uninomial=>{:epitheton=>"Agropogon", :authorship=>"P.Fourn.", :basionymAuthorTeam=>{:authorTeam=>"P.Fourn.", :author=>["P.Fourn."]}}}}],
+      ["× Agropogon", {:namedHybrid=>{:uninomial=>{:epitheton=>"Agropogon"}}}],
+      ["x Agropogon", {:namedHybrid=>{:uninomial=>{:epitheton=>"Agropogon"}}}],
+      ["X Agropogon", {:namedHybrid=>{:uninomial=>{:epitheton=>"Agropogon"}}}],
+      ["X Cupressocyparis leylandii", {:namedHybrid=>{:genus=>{:epitheton=>"Cupressocyparis"}, :species=>{:epitheton=>"leylandii"}}}],
+      ["×Heucherella tiarelloides", {:namedHybrid=>{:genus=>{:epitheton=>"Heucherella"}, :species=>{:epitheton=>"tiarelloides"}}}],
+      ["xHeucherella tiarelloides", {:namedHybrid=>{:genus=>{:epitheton=>"Heucherella"}, :species=>{:epitheton=>"tiarelloides"}}}],
+      ["x Heucherella tiarelloides", {:namedHybrid=>{:genus=>{:epitheton=>"Heucherella"}, :species=>{:epitheton=>"tiarelloides"}}}],
+      ["×Agropogon littoralis (Sm.) C. E. Hubb. 1946", {:namedHybrid=>{:genus=>{:epitheton=>"Agropogon"}, :species=>{:epitheton=>"littoralis", :authorship=>"(Sm.) C. E. Hubb. 1946", :combinationAuthorTeam=>{:authorTeam=>"C. E. Hubb.", :author=>["C. E. Hubb."], :year=>"1946"}, :basionymAuthorTeam=>{:authorTeam=>"Sm.", :author=>["Sm."]}}}}]
+    ].each do |res| 
+      parse(res[0]).should_not be_nil
+      details(res[0]).should == res[1]
+    end
+    
+    
+    #Asplenium X inexpectatum (E.L. Braun 1940) Morton 1956	this is taken from botanical tokyo code 
+    #Mentha ×smithiana R. A. Graham (1949)
+    #Salix ×capreola Andersson (1867)
+    #Salix xcapreola A. Kern. ex Andersson
+    #Salix x capreola Andersson
+  end
+  
+  
   it 'should not parse serveral authors groups with several years NOT CORRECT' do
     parse("Pseudocercospora dendrobii (H.C. Burnett 1883) (Leight.) (Movss. 1967) U. Braun & Crous 2003").should be_nil
   end

@@ -24,10 +24,83 @@ module ScientificNameClean
       return cached
     end
 
-    r0 = _nt_scientific_name_2
+    r0 = _nt_scientific_name_3
     r0.extend(Root0)
 
     node_cache[:root][start_index] = r0
+
+    return r0
+  end
+
+  module ScientificName30
+    def a
+      elements[0]
+    end
+
+    def space
+      elements[1]
+    end
+
+    def b
+      elements[2]
+    end
+  end
+
+  module ScientificName31
+    def  value
+      a.value + " " + b.value
+    end
+    
+    def canonical
+      b.canonical
+    end
+    
+    def details
+      {:namedHybrid => b.details}
+    end
+  end
+
+  def _nt_scientific_name_3
+    start_index = index
+    if node_cache[:scientific_name_3].has_key?(index)
+      cached = node_cache[:scientific_name_3][index]
+      @index = cached.interval.end if cached
+      return cached
+    end
+
+    i0 = index
+    i1, s1 = index, []
+    r2 = _nt_hybrid_character
+    s1 << r2
+    if r2
+      r3 = _nt_space
+      s1 << r3
+      if r3
+        r4 = _nt_scientific_name_2
+        s1 << r4
+      end
+    end
+    if s1.last
+      r1 = instantiate_node(SyntaxNode,input, i1...index, s1)
+      r1.extend(ScientificName30)
+      r1.extend(ScientificName31)
+    else
+      self.index = i1
+      r1 = nil
+    end
+    if r1
+      r0 = r1
+    else
+      r5 = _nt_scientific_name_2
+      if r5
+        r0 = r5
+      else
+        self.index = i0
+        r0 = nil
+      end
+    end
+
+    node_cache[:scientific_name_3][start_index] = r0
 
     return r0
   end
@@ -4350,6 +4423,93 @@ module ScientificNameClean
     end
 
     node_cache[:year_number][start_index] = r0
+
+    return r0
+  end
+
+  module HybridCharacter0
+    def value
+      "x"
+    end
+  end
+
+  def _nt_hybrid_character
+    start_index = index
+    if node_cache[:hybrid_character].has_key?(index)
+      cached = node_cache[:hybrid_character][index]
+      @index = cached.interval.end if cached
+      return cached
+    end
+
+    i0 = index
+    i1 = index
+    if input.index("x", index) == index
+      r2 = instantiate_node(SyntaxNode,input, index...(index + 1))
+      @index += 1
+    else
+      terminal_parse_failure("x")
+      r2 = nil
+    end
+    if r2
+      r1 = r2
+      r1.extend(HybridCharacter0)
+    else
+      if input.index("X", index) == index
+        r3 = instantiate_node(SyntaxNode,input, index...(index + 1))
+        @index += 1
+      else
+        terminal_parse_failure("X")
+        r3 = nil
+      end
+      if r3
+        r1 = r3
+        r1.extend(HybridCharacter0)
+      else
+        self.index = i1
+        r1 = nil
+      end
+    end
+    if r1
+      r0 = r1
+    else
+      r4 = _nt_multiplication_sign
+      if r4
+        r0 = r4
+      else
+        self.index = i0
+        r0 = nil
+      end
+    end
+
+    node_cache[:hybrid_character][start_index] = r0
+
+    return r0
+  end
+
+  module MultiplicationSign0
+    def value
+      text_value
+    end
+  end
+
+  def _nt_multiplication_sign
+    start_index = index
+    if node_cache[:multiplication_sign].has_key?(index)
+      cached = node_cache[:multiplication_sign][index]
+      @index = cached.interval.end if cached
+      return cached
+    end
+
+    if input.index("×", index) == index
+      r0 = instantiate_node(SyntaxNode,input, index...(index + 1))
+      r0.extend(MultiplicationSign0)
+      @index += 1
+    else
+      terminal_parse_failure("×")
+      r0 = nil
+    end
+
+    node_cache[:multiplication_sign][start_index] = r0
 
     return r0
   end
