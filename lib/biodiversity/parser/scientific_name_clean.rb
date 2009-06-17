@@ -1733,9 +1733,47 @@ module ScientificNameClean
     def b
       elements[2]
     end
+
+    def space
+      elements[3]
+    end
+
+    def c
+      elements[4]
+    end
   end
 
   module Authorship1
+    def value
+      a.value + " " + b.value + " " + c.value
+    end
+    
+    def pos
+      a.pos.merge(b.pos).merge(c.pos)
+    end
+    
+    def details
+      val = {:authorship => text_value.strip, :combinationAuthorTeam => b.details[:basionymAuthorTeam], :basionymAuthorTeam => a.details[:basionymAuthorTeam]}
+      val[:combinationAuthorTeam].merge!(c.details)
+      val
+    end
+  end
+
+  module Authorship2
+    def a
+      elements[0]
+    end
+
+    def space
+      elements[1]
+    end
+
+    def b
+      elements[2]
+    end
+  end
+
+  module Authorship3
     def value
       a.value + " " + b.value
     end
@@ -1745,7 +1783,38 @@ module ScientificNameClean
     end
     
     def details
-      {:authorship => text_value, :combinationAuthorTeam => b.details_with_arg('combinationAuthorTeam')[:combinationAuthorTeam], :basionymAuthorTeam => a.details[:basionymAuthorTeam]}
+      {:authorship => text_value.strip, :combinationAuthorTeam => b.details[:basionymAuthorTeam], :basionymAuthorTeam => a.details[:basionymAuthorTeam]}
+    end
+  end
+
+  module Authorship4
+    def a
+      elements[0]
+    end
+
+    def space
+      elements[1]
+    end
+
+    def b
+      elements[2]
+    end
+  end
+
+  module Authorship5
+    def value
+      a.value + " " + b.value
+    end
+    
+    def pos
+      a.pos.merge(b.pos)
+    end
+    
+    def details
+      val = a.details
+      val[:authorship] = text_value.strip
+      val[:basionymAuthorTeam].merge!(b.details)
+      val
     end
   end
 
@@ -1767,6 +1836,14 @@ module ScientificNameClean
       if r3
         r4 = _nt_simple_authorship
         s1 << r4
+        if r4
+          r5 = _nt_space
+          s1 << r5
+          if r5
+            r6 = _nt_ex_authorship
+            s1 << r6
+          end
+        end
       end
     end
     if s1.last
@@ -1780,16 +1857,62 @@ module ScientificNameClean
     if r1
       r0 = r1
     else
-      r5 = _nt_basionym_authorship_with_parenthesis
-      if r5
-        r0 = r5
+      i7, s7 = index, []
+      r8 = _nt_basionym_authorship_with_parenthesis
+      s7 << r8
+      if r8
+        r9 = _nt_space
+        s7 << r9
+        if r9
+          r10 = _nt_simple_authorship
+          s7 << r10
+        end
+      end
+      if s7.last
+        r7 = instantiate_node(SyntaxNode,input, i7...index, s7)
+        r7.extend(Authorship2)
+        r7.extend(Authorship3)
       else
-        r6 = _nt_simple_authorship
-        if r6
-          r0 = r6
+        self.index = i7
+        r7 = nil
+      end
+      if r7
+        r0 = r7
+      else
+        r11 = _nt_basionym_authorship_with_parenthesis
+        if r11
+          r0 = r11
         else
-          self.index = i0
-          r0 = nil
+          i12, s12 = index, []
+          r13 = _nt_simple_authorship
+          s12 << r13
+          if r13
+            r14 = _nt_space
+            s12 << r14
+            if r14
+              r15 = _nt_ex_authorship
+              s12 << r15
+            end
+          end
+          if s12.last
+            r12 = instantiate_node(SyntaxNode,input, i12...index, s12)
+            r12.extend(Authorship4)
+            r12.extend(Authorship5)
+          else
+            self.index = i12
+            r12 = nil
+          end
+          if r12
+            r0 = r12
+          else
+            r16 = _nt_simple_authorship
+            if r16
+              r0 = r16
+            else
+              self.index = i0
+              r0 = nil
+            end
+          end
         end
       end
     end
@@ -1831,15 +1954,13 @@ module ScientificNameClean
     end
     
     def pos
-      a.pos.merge(b.pos)
+     a.pos.merge(b.pos)
     end 
     
     def details
       { :authorship => text_value, 
-        :basionymAuthorTeam => {
-          :authorTeam => a.text_value
-        }.merge(a.details).merge(b.details)
-      }      
+        :basionymAuthorTeam => {:author_team => text_value}.merge(a.details).merge(b.details)          
+        }
     end
   end
 
@@ -1856,21 +1977,30 @@ module ScientificNameClean
       elements[3]
     end
 
+    def b
+      elements[4]
+    end
+
+    def space
+      elements[5]
+    end
+
   end
 
   module BasionymAuthorshipWithParenthesis3
     def value
-      "(" + a.value + ")"
+      "(" + a.value + " " + b.value + ")"
     end
     
     def pos
-      a.pos
+      a.pos.merge(b.pos)
     end
     
     def details
       val = a.details
-      val[:authorship] = text_value
-      val      
+      val[:basionymAuthorTeam].merge!(b.details)
+      val[:authorship] = text_value.strip
+      val
     end
   end
 
@@ -1890,6 +2020,37 @@ module ScientificNameClean
   end
 
   module BasionymAuthorshipWithParenthesis5
+    def value
+      "(" + a.value + ")"
+    end
+    
+    def pos
+      a.pos
+    end
+    
+    def details
+      val = a.details
+      val[:authorship] = text_value
+      val      
+    end
+  end
+
+  module BasionymAuthorshipWithParenthesis6
+    def space
+      elements[1]
+    end
+
+    def a
+      elements[2]
+    end
+
+    def space
+      elements[3]
+    end
+
+  end
+
+  module BasionymAuthorshipWithParenthesis7
     def value
       "(?)"
     end
@@ -1999,14 +2160,22 @@ module ScientificNameClean
             r16 = _nt_space
             s12 << r16
             if r16
-              if input.index(")", index) == index
-                r17 = instantiate_node(SyntaxNode,input, index...(index + 1))
-                @index += 1
-              else
-                terminal_parse_failure(")")
-                r17 = nil
-              end
+              r17 = _nt_ex_authorship
               s12 << r17
+              if r17
+                r18 = _nt_space
+                s12 << r18
+                if r18
+                  if input.index(")", index) == index
+                    r19 = instantiate_node(SyntaxNode,input, index...(index + 1))
+                    @index += 1
+                  else
+                    terminal_parse_failure(")")
+                    r19 = nil
+                  end
+                  s12 << r19
+                end
+              end
             end
           end
         end
@@ -2022,61 +2191,166 @@ module ScientificNameClean
       if r12
         r0 = r12
       else
-        i18, s18 = index, []
+        i20, s20 = index, []
         if input.index("(", index) == index
-          r19 = instantiate_node(SyntaxNode,input, index...(index + 1))
+          r21 = instantiate_node(SyntaxNode,input, index...(index + 1))
           @index += 1
         else
           terminal_parse_failure("(")
-          r19 = nil
+          r21 = nil
         end
-        s18 << r19
-        if r19
-          r20 = _nt_space
-          s18 << r20
-          if r20
-            if input.index("?", index) == index
-              r21 = instantiate_node(SyntaxNode,input, index...(index + 1))
-              @index += 1
-            else
-              terminal_parse_failure("?")
-              r21 = nil
-            end
-            s18 << r21
-            if r21
-              r22 = _nt_space
-              s18 << r22
-              if r22
+        s20 << r21
+        if r21
+          r22 = _nt_space
+          s20 << r22
+          if r22
+            r23 = _nt_simple_authorship
+            s20 << r23
+            if r23
+              r24 = _nt_space
+              s20 << r24
+              if r24
                 if input.index(")", index) == index
-                  r23 = instantiate_node(SyntaxNode,input, index...(index + 1))
+                  r25 = instantiate_node(SyntaxNode,input, index...(index + 1))
                   @index += 1
                 else
                   terminal_parse_failure(")")
-                  r23 = nil
+                  r25 = nil
                 end
-                s18 << r23
+                s20 << r25
               end
             end
           end
         end
-        if s18.last
-          r18 = instantiate_node(SyntaxNode,input, i18...index, s18)
-          r18.extend(BasionymAuthorshipWithParenthesis4)
-          r18.extend(BasionymAuthorshipWithParenthesis5)
+        if s20.last
+          r20 = instantiate_node(SyntaxNode,input, i20...index, s20)
+          r20.extend(BasionymAuthorshipWithParenthesis4)
+          r20.extend(BasionymAuthorshipWithParenthesis5)
         else
-          self.index = i18
-          r18 = nil
+          self.index = i20
+          r20 = nil
         end
-        if r18
-          r0 = r18
+        if r20
+          r0 = r20
         else
-          self.index = i0
-          r0 = nil
+          i26, s26 = index, []
+          if input.index("(", index) == index
+            r27 = instantiate_node(SyntaxNode,input, index...(index + 1))
+            @index += 1
+          else
+            terminal_parse_failure("(")
+            r27 = nil
+          end
+          s26 << r27
+          if r27
+            r28 = _nt_space
+            s26 << r28
+            if r28
+              if input.index("?", index) == index
+                r29 = instantiate_node(SyntaxNode,input, index...(index + 1))
+                @index += 1
+              else
+                terminal_parse_failure("?")
+                r29 = nil
+              end
+              s26 << r29
+              if r29
+                r30 = _nt_space
+                s26 << r30
+                if r30
+                  if input.index(")", index) == index
+                    r31 = instantiate_node(SyntaxNode,input, index...(index + 1))
+                    @index += 1
+                  else
+                    terminal_parse_failure(")")
+                    r31 = nil
+                  end
+                  s26 << r31
+                end
+              end
+            end
+          end
+          if s26.last
+            r26 = instantiate_node(SyntaxNode,input, i26...index, s26)
+            r26.extend(BasionymAuthorshipWithParenthesis6)
+            r26.extend(BasionymAuthorshipWithParenthesis7)
+          else
+            self.index = i26
+            r26 = nil
+          end
+          if r26
+            r0 = r26
+          else
+            self.index = i0
+            r0 = nil
+          end
         end
       end
     end
 
     node_cache[:basionym_authorship_with_parenthesis][start_index] = r0
+
+    return r0
+  end
+
+  module ExAuthorship0
+    def a
+      elements[0]
+    end
+
+    def space
+      elements[1]
+    end
+
+    def b
+      elements[2]
+    end
+  end
+
+  module ExAuthorship1
+    def value
+      " ex " + b.value
+    end
+    
+    def pos
+      b.pos
+    end
+    
+    def details
+      val = {:exAuthorTeam => {:authorTeam => b.text_value.strip}.merge(b.details[:basionymAuthorTeam])}
+      val
+    end
+  end
+
+  def _nt_ex_authorship
+    start_index = index
+    if node_cache[:ex_authorship].has_key?(index)
+      cached = node_cache[:ex_authorship][index]
+      @index = cached.interval.end if cached
+      return cached
+    end
+
+    i0, s0 = index, []
+    r1 = _nt_ex_sep
+    s0 << r1
+    if r1
+      r2 = _nt_space
+      s0 << r2
+      if r2
+        r3 = _nt_simple_authorship
+        s0 << r3
+      end
+    end
+    if s0.last
+      r0 = instantiate_node(SyntaxNode,input, i0...index, s0)
+      r0.extend(ExAuthorship0)
+      r0.extend(ExAuthorship1)
+    else
+      self.index = i0
+      r0 = nil
+    end
+
+    node_cache[:ex_authorship][start_index] = r0
 
     return r0
   end
@@ -2131,7 +2405,7 @@ module ScientificNameClean
     def details_with_arg(authorTeamType = 'basionymAuthorTeam')
       { :authorship => text_value, 
         authorTeamType.to_sym => {
-          :authorTeam => text_value
+          :authorTeam => text_value,
         }
       }      
     end
@@ -2370,6 +2644,45 @@ module ScientificNameClean
     end
 
     node_cache[:unknown_auth][start_index] = r0
+
+    return r0
+  end
+
+  def _nt_ex_sep
+    start_index = index
+    if node_cache[:ex_sep].has_key?(index)
+      cached = node_cache[:ex_sep][index]
+      @index = cached.interval.end if cached
+      return cached
+    end
+
+    i0 = index
+    if input.index("ex", index) == index
+      r1 = instantiate_node(SyntaxNode,input, index...(index + 2))
+      @index += 2
+    else
+      terminal_parse_failure("ex")
+      r1 = nil
+    end
+    if r1
+      r0 = r1
+    else
+      if input.index("in", index) == index
+        r2 = instantiate_node(SyntaxNode,input, index...(index + 2))
+        @index += 2
+      else
+        terminal_parse_failure("in")
+        r2 = nil
+      end
+      if r2
+        r0 = r2
+      else
+        self.index = i0
+        r0 = nil
+      end
+    end
+
+    node_cache[:ex_sep][start_index] = r0
 
     return r0
   end

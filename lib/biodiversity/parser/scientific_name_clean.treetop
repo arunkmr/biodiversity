@@ -381,7 +381,7 @@ grammar ScientificNameClean
       end
       
       def details
-        val = {:authorship => text_value.strip, :combinationAuthorTeam => b.details_with_arg('combinationAuthorTeam')[:combinationAuthorTeam], :basionymAuthorTeam => a.details[:basionymAuthorTeam]}
+        val = {:authorship => text_value.strip, :combinationAuthorTeam => b.details[:basionymAuthorTeam], :basionymAuthorTeam => a.details[:basionymAuthorTeam]}
         val[:combinationAuthorTeam].merge!(c.details)
         val
       end
@@ -397,7 +397,7 @@ grammar ScientificNameClean
       end
       
       def details
-        {:authorship => text_value.strip, :combinationAuthorTeam => b.details_with_arg('combinationAuthorTeam')[:combinationAuthorTeam], :basionymAuthorTeam => a.details[:basionymAuthorTeam]}
+        {:authorship => text_value.strip, :combinationAuthorTeam => b.details[:basionymAuthorTeam], :basionymAuthorTeam => a.details[:basionymAuthorTeam]}
       end
     }
     /
@@ -540,7 +540,7 @@ grammar ScientificNameClean
       def details_with_arg(authorTeamType = 'basionymAuthorTeam')
         { :authorship => text_value, 
           authorTeamType.to_sym => {
-            :authorTeam => text_value
+            :authorTeam => text_value,
           }
         }      
       end
