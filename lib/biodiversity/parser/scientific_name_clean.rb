@@ -2002,6 +2002,10 @@ module ScientificNameClean
   end
 
   module Subgenus0
+    def left_paren
+      elements[0]
+    end
+
     def space
       elements[1]
     end
@@ -2014,11 +2018,18 @@ module ScientificNameClean
       elements[3]
     end
 
+    def right_paren
+      elements[4]
+    end
   end
 
   module Subgenus1
     def value
       "(" + a.value + ")"
+    end
+    
+    def canonical
+      a.value
     end
     
     def pos
@@ -2039,13 +2050,7 @@ module ScientificNameClean
     end
 
     i0, s0 = index, []
-    if input.index("(", index) == index
-      r1 = instantiate_node(SyntaxNode,input, index...(index + 1))
-      @index += 1
-    else
-      terminal_parse_failure("(")
-      r1 = nil
-    end
+    r1 = _nt_left_paren
     s0 << r1
     if r1
       r2 = _nt_space
@@ -2057,13 +2062,7 @@ module ScientificNameClean
           r4 = _nt_space
           s0 << r4
           if r4
-            if input.index(")", index) == index
-              r5 = instantiate_node(SyntaxNode,input, index...(index + 1))
-              @index += 1
-            else
-              terminal_parse_failure(")")
-              r5 = nil
-            end
+            r5 = _nt_right_paren
             s0 << r5
           end
         end
@@ -2422,6 +2421,10 @@ module ScientificNameClean
   end
 
   module BasionymAuthorshipWithParenthesis0
+    def left_paren
+      elements[0]
+    end
+
     def space
       elements[1]
     end
@@ -2432,6 +2435,10 @@ module ScientificNameClean
 
     def space
       elements[3]
+    end
+
+    def right_paren
+      elements[4]
     end
 
     def space
@@ -2464,6 +2471,10 @@ module ScientificNameClean
   end
 
   module BasionymAuthorshipWithParenthesis2
+    def left_paren
+      elements[0]
+    end
+
     def space
       elements[1]
     end
@@ -2484,6 +2495,9 @@ module ScientificNameClean
       elements[5]
     end
 
+    def right_paren
+      elements[6]
+    end
   end
 
   module BasionymAuthorshipWithParenthesis3
@@ -2504,6 +2518,10 @@ module ScientificNameClean
   end
 
   module BasionymAuthorshipWithParenthesis4
+    def left_paren
+      elements[0]
+    end
+
     def space
       elements[1]
     end
@@ -2516,6 +2534,9 @@ module ScientificNameClean
       elements[3]
     end
 
+    def right_paren
+      elements[4]
+    end
   end
 
   module BasionymAuthorshipWithParenthesis5
@@ -2535,6 +2556,10 @@ module ScientificNameClean
   end
 
   module BasionymAuthorshipWithParenthesis6
+    def left_paren
+      elements[0]
+    end
+
     def space
       elements[1]
     end
@@ -2547,6 +2572,9 @@ module ScientificNameClean
       elements[3]
     end
 
+    def right_paren
+      elements[4]
+    end
   end
 
   module BasionymAuthorshipWithParenthesis7
@@ -2573,13 +2601,7 @@ module ScientificNameClean
 
     i0 = index
     i1, s1 = index, []
-    if input.index("(", index) == index
-      r2 = instantiate_node(SyntaxNode,input, index...(index + 1))
-      @index += 1
-    else
-      terminal_parse_failure("(")
-      r2 = nil
-    end
+    r2 = _nt_left_paren
     s1 << r2
     if r2
       r3 = _nt_space
@@ -2591,13 +2613,7 @@ module ScientificNameClean
           r5 = _nt_space
           s1 << r5
           if r5
-            if input.index(")", index) == index
-              r6 = instantiate_node(SyntaxNode,input, index...(index + 1))
-              @index += 1
-            else
-              terminal_parse_failure(")")
-              r6 = nil
-            end
+            r6 = _nt_right_paren
             s1 << r6
             if r6
               r7 = _nt_space
@@ -2641,13 +2657,7 @@ module ScientificNameClean
       r0 = r1
     else
       i12, s12 = index, []
-      if input.index("(", index) == index
-        r13 = instantiate_node(SyntaxNode,input, index...(index + 1))
-        @index += 1
-      else
-        terminal_parse_failure("(")
-        r13 = nil
-      end
+      r13 = _nt_left_paren
       s12 << r13
       if r13
         r14 = _nt_space
@@ -2665,13 +2675,7 @@ module ScientificNameClean
                 r18 = _nt_space
                 s12 << r18
                 if r18
-                  if input.index(")", index) == index
-                    r19 = instantiate_node(SyntaxNode,input, index...(index + 1))
-                    @index += 1
-                  else
-                    terminal_parse_failure(")")
-                    r19 = nil
-                  end
+                  r19 = _nt_right_paren
                   s12 << r19
                 end
               end
@@ -2691,13 +2695,7 @@ module ScientificNameClean
         r0 = r12
       else
         i20, s20 = index, []
-        if input.index("(", index) == index
-          r21 = instantiate_node(SyntaxNode,input, index...(index + 1))
-          @index += 1
-        else
-          terminal_parse_failure("(")
-          r21 = nil
-        end
+        r21 = _nt_left_paren
         s20 << r21
         if r21
           r22 = _nt_space
@@ -2709,13 +2707,7 @@ module ScientificNameClean
               r24 = _nt_space
               s20 << r24
               if r24
-                if input.index(")", index) == index
-                  r25 = instantiate_node(SyntaxNode,input, index...(index + 1))
-                  @index += 1
-                else
-                  terminal_parse_failure(")")
-                  r25 = nil
-                end
+                r25 = _nt_right_paren
                 s20 << r25
               end
             end
@@ -2733,13 +2725,7 @@ module ScientificNameClean
           r0 = r20
         else
           i26, s26 = index, []
-          if input.index("(", index) == index
-            r27 = instantiate_node(SyntaxNode,input, index...(index + 1))
-            @index += 1
-          else
-            terminal_parse_failure("(")
-            r27 = nil
-          end
+          r27 = _nt_left_paren
           s26 << r27
           if r27
             r28 = _nt_space
@@ -2757,13 +2743,7 @@ module ScientificNameClean
                 r30 = _nt_space
                 s26 << r30
                 if r30
-                  if input.index(")", index) == index
-                    r31 = instantiate_node(SyntaxNode,input, index...(index + 1))
-                    @index += 1
-                  else
-                    terminal_parse_failure(")")
-                    r31 = nil
-                  end
+                  r31 = _nt_right_paren
                   s26 << r31
                 end
               end
@@ -4995,12 +4975,20 @@ module ScientificNameClean
       elements[0]
     end
 
-    def a
+    def space
       elements[1]
     end
 
-    def c
+    def a
       elements[2]
+    end
+
+    def space
+      elements[3]
+    end
+
+    def c
+      elements[4]
     end
   end
 
@@ -5028,38 +5016,34 @@ module ScientificNameClean
 
     i0 = index
     i1, s1 = index, []
-    if input.index("(", index) == index
-      r2 = instantiate_node(SyntaxNode,input, index...(index + 1))
-      @index += 1
-    else
-      terminal_parse_failure("(")
-      r2 = nil
-    end
+    r2 = _nt_left_paren
     s1 << r2
     if r2
-      i3 = index
-      r4 = _nt_year_number_with_character
-      if r4
-        r3 = r4
-      else
-        r5 = _nt_year_number
-        if r5
-          r3 = r5
-        else
-          self.index = i3
-          r3 = nil
-        end
-      end
+      r3 = _nt_space
       s1 << r3
       if r3
-        if input.index(")", index) == index
-          r6 = instantiate_node(SyntaxNode,input, index...(index + 1))
-          @index += 1
+        i4 = index
+        r5 = _nt_year_number_with_character
+        if r5
+          r4 = r5
         else
-          terminal_parse_failure(")")
-          r6 = nil
+          r6 = _nt_year_number
+          if r6
+            r4 = r6
+          else
+            self.index = i4
+            r4 = nil
+          end
         end
-        s1 << r6
+        s1 << r4
+        if r4
+          r7 = _nt_space
+          s1 << r7
+          if r7
+            r8 = _nt_right_paren
+            s1 << r8
+          end
+        end
       end
     end
     if s1.last
@@ -5073,13 +5057,13 @@ module ScientificNameClean
     if r1
       r0 = r1
     else
-      r7 = _nt_year_number_with_character
-      if r7
-        r0 = r7
+      r9 = _nt_year_number_with_character
+      if r9
+        r0 = r9
       else
-        r8 = _nt_year_number
-        if r8
-          r0 = r8
+        r10 = _nt_year_number
+        if r10
+          r0 = r10
         else
           self.index = i0
           r0 = nil
@@ -5197,13 +5181,32 @@ module ScientificNameClean
         end
         s0 << r3
         if r3
-          if input.index(Regexp.new('[0-9\\?]'), index) == index
-            r4 = instantiate_node(SyntaxNode,input, index...(index + 1))
+          if input.index(Regexp.new('[0-9]'), index) == index
+            r5 = instantiate_node(SyntaxNode,input, index...(index + 1))
             @index += 1
           else
-            r4 = nil
+            r5 = nil
+          end
+          if r5
+            r4 = r5
+          else
+            r4 = instantiate_node(SyntaxNode,input, index...index)
           end
           s0 << r4
+          if r4
+            if input.index(Regexp.new('[\\?]'), index) == index
+              r7 = instantiate_node(SyntaxNode,input, index...(index + 1))
+              @index += 1
+            else
+              r7 = nil
+            end
+            if r7
+              r6 = r7
+            else
+              r6 = instantiate_node(SyntaxNode,input, index...index)
+            end
+            s0 << r6
+          end
         end
       end
     end
@@ -5217,6 +5220,48 @@ module ScientificNameClean
     end
 
     node_cache[:year_number][start_index] = r0
+
+    return r0
+  end
+
+  def _nt_left_paren
+    start_index = index
+    if node_cache[:left_paren].has_key?(index)
+      cached = node_cache[:left_paren][index]
+      @index = cached.interval.end if cached
+      return cached
+    end
+
+    if input.index("(", index) == index
+      r0 = instantiate_node(SyntaxNode,input, index...(index + 1))
+      @index += 1
+    else
+      terminal_parse_failure("(")
+      r0 = nil
+    end
+
+    node_cache[:left_paren][start_index] = r0
+
+    return r0
+  end
+
+  def _nt_right_paren
+    start_index = index
+    if node_cache[:right_paren].has_key?(index)
+      cached = node_cache[:right_paren][index]
+      @index = cached.interval.end if cached
+      return cached
+    end
+
+    if input.index(")", index) == index
+      r0 = instantiate_node(SyntaxNode,input, index...(index + 1))
+      @index += 1
+    else
+      terminal_parse_failure(")")
+      r0 = nil
+    end
+
+    node_cache[:right_paren][start_index] = r0
 
     return r0
   end

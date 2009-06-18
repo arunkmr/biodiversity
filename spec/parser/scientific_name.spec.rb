@@ -45,27 +45,4 @@ describe ScientificNameClean do
     end
   end
 
-  it 'should parse valid scientific name' do
-    sn = 'Pseudocercospora     dendrobii'
-    parse(sn).should_not be_nil
-    value(sn).should == 'Pseudocercospora dendrobii'
-    canonical(sn).should == 'Pseudocercospora dendrobii'
-    details(sn).should == {:genus=>{:epitheton=>"Pseudocercospora"}, :species=>{:epitheton=>"dendrobii"}}
-    pos(sn).should == {0=>["genus", 16], 21=>["species", 30]}
-    canonical('Quoyula').should == 'Quoyula'
-    parse('Perissandra laotica').should_not be_nil
-  end
-  
-  # it 'should parse inaccurate name' do
-  #   parse("Tridentella tangeroae Bruce, 198?").should_not be_nil
-  # end
-  # 
-  # it 'should parse name that cannot be fully parsed' do
-  #   parse("Plantago major ESEFDSlj sdafsladjfasd fd ;asldfjasfas#&^&*^*^&}}").should_not be_nil
-  #   canonical('Plantago major ESEFDSlj sdafsladjfasd fd ;asldfjasfas#&^&*^*^&}}').should == 'Plantago major'
-  # end
-  # 
-  # it 'should generate pos_json output' do
-  #   parse("Plantago major").pos_json.should == '{"0":["genus",8],"9":["species",14]}'
-  # end
 end

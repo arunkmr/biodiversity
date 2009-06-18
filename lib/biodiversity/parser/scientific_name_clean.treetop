@@ -434,9 +434,13 @@ grammar ScientificNameClean
   end
   
   rule subgenus
-    "(" space a:cap_latin_word space ")" {
+    left_paren space a:cap_latin_word space right_paren {
       def value
         "(" + a.value + ")"
+      end
+      
+      def canonical
+        a.value
       end
       
       def pos
@@ -558,7 +562,7 @@ grammar ScientificNameClean
    
   
   rule basionym_authorship_with_parenthesis
-    "(" space a:authors_names space ")" space [,]? space b:year {
+    left_paren space a:authors_names space right_paren space [,]? space b:year {
       def value
         "(" + a.value + " " + b.value + ")"
       end
@@ -574,7 +578,7 @@ grammar ScientificNameClean
       end
     }
     /
-    "(" space a:simple_authorship space b:ex_authorship space ")" {
+    left_paren space a:simple_authorship space b:ex_authorship space right_paren {
       def value
         "(" + a.value + " " + b.value + ")"
       end
@@ -591,7 +595,7 @@ grammar ScientificNameClean
       end
     }
     /
-    "(" space a:simple_authorship space ")" {
+    left_paren space a:simple_authorship space right_paren {
       def value
         "(" + a.value + ")"
       end
@@ -607,7 +611,7 @@ grammar ScientificNameClean
       end
     }
     /
-    "(" space a:"?" space ")" {
+    left_paren space a:"?" space right_paren {
       def value
         "(?)"
       end
@@ -1006,7 +1010,7 @@ grammar ScientificNameClean
   end
 
   rule year
-    b:"(" a:(year_number_with_character/year_number) c:")" {
+    b:left_paren space a:(year_number_with_character/year_number) space c:right_paren {
       def value
         a.value
       end
@@ -1042,7 +1046,7 @@ grammar ScientificNameClean
   end
   
   rule year_number
-    [12] [7890] [0-9] [0-9\?] {
+    [12] [7890] [0-9] [0-9]? [\?]? {
       def value
         text_value
       end
@@ -1055,6 +1059,14 @@ grammar ScientificNameClean
         {:year => value}
       end
     }
+  end
+  
+  rule left_paren
+    "("
+  end
+  
+  rule right_paren
+    ")"
   end
   
   rule hybrid_character

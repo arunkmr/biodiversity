@@ -15,6 +15,7 @@ Pseudocercospora Speg. 1910|{"scientificName":{"parsed":true, "verbatim":"Pseudo
 Pseudocercospora Spegazzini, 1910|{"scientificName":{"parsed":true, "verbatim":"Pseudocercospora Spegazzini, 1910", "normalized":"Pseudocercospora Spegazzini 1910", "canonical":"Pseudocercospora", "uninomial":{"epitheton":"Pseudocercospora", "authorship":"Spegazzini, 1910", "basionymAuthorTeam":{"authorTeam":"Spegazzini", "author":["Spegazzini"], "year":"1910"}}}}
 Platypus bicaudatulus Schedl (1935h)|{"scientificName":{"parsed":true, "verbatim":"Platypus bicaudatulus Schedl (1935h)", "normalized":"Platypus bicaudatulus Schedl 1935", "canonical":"Platypus bicaudatulus", "genus":{"epitheton":"Platypus"}, "species":{"epitheton":"bicaudatulus", "authorship":"Schedl (1935h)", "basionymAuthorTeam":{"authorTeam":"Schedl", "author":["Schedl"], "year":"1935"}}}}
 Platypus bicaudatulus Schedl (1935)|{"scientificName":{"parsed":true, "verbatim":"Platypus bicaudatulus Schedl (1935)", "normalized":"Platypus bicaudatulus Schedl 1935", "canonical":"Platypus bicaudatulus", "genus":{"epitheton":"Platypus"}, "species":{"epitheton":"bicaudatulus", "authorship":"Schedl (1935)", "basionymAuthorTeam":{"authorTeam":"Schedl", "author":["Schedl"], "year":"1935"}}}}
+Tridentella tangeroae Bruce, 198?|{"scientificName":{"parsed":true, "verbatim":"Tridentella tangeroae Bruce, 198?", "normalized":"Tridentella tangeroae Bruce 198?", "canonical":"Tridentella tangeroae", "genus":{"epitheton":"Tridentella"}, "species":{"epitheton":"tangeroae", "authorship":"Bruce, 198?", "basionymAuthorTeam":{"authorTeam":"Bruce", "author":["Bruce"], "year":"198?"}}}}
 
 #two-letter genus names (legacy genera, not allowed anymore)
 Ca Dyar 1914|{"scientificName":{"parsed":true, "verbatim":"Ca Dyar 1914", "normalized":"Ca Dyar 1914", "canonical":"Ca", "uninomial":{"epitheton":"Ca", "authorship":"Dyar 1914", "basionymAuthorTeam":{"authorTeam":"Dyar", "author":["Dyar"], "year":"1914"}}}}
@@ -43,6 +44,10 @@ Pseudocercospora     dendrobii|{"scientificName":{"parsed":true, "verbatim":"Pse
 #binomial with author and a year
 Platypus bicaudatulus Schedl 1935|{"scientificName":{"parsed":true, "verbatim":"Platypus bicaudatulus Schedl 1935", "normalized":"Platypus bicaudatulus Schedl 1935", "canonical":"Platypus bicaudatulus", "genus":{"epitheton":"Platypus"}, "species":{"epitheton":"bicaudatulus", "authorship":"Schedl 1935", "basionymAuthorTeam":{"authorTeam":"Schedl", "author":["Schedl"], "year":"1935"}}}}
 Platypus bicaudatulus Schedl, 1935h|{"scientificName":{"parsed":true, "verbatim":"Platypus bicaudatulus Schedl, 1935h", "normalized":"Platypus bicaudatulus Schedl 1935", "canonical":"Platypus bicaudatulus", "genus":{"epitheton":"Platypus"}, "species":{"epitheton":"bicaudatulus", "authorship":"Schedl, 1935h", "basionymAuthorTeam":{"authorTeam":"Schedl", "author":["Schedl"], "year":"1935"}}}}
+
+# whitespace names (rare, only ~50 cases)
+#TODO Donatia novae zelandiae Hook.f.
+#TODO Donatia novae-zelandiae Hook.f.
 
 #binomial with several authours
 Pseudocercospora dendrobii U. Braun & Crous|{"scientificName":{"parsed":true, "verbatim":"Pseudocercospora dendrobii U. Braun & Crous", "normalized":"Pseudocercospora dendrobii U. Braun et Crous", "canonical":"Pseudocercospora dendrobii", "genus":{"epitheton":"Pseudocercospora"}, "species":{"epitheton":"dendrobii", "authorship":"U. Braun & Crous", "basionymAuthorTeam":{"authorTeam":"U. Braun & Crous", "author":["U. Braun", "Crous"]}}}}
@@ -188,3 +193,37 @@ Senecio jacquinianus sec. Rchb.|{"scientificName":{"parsed":true, "verbatim":"Se
 
 #empty spaces
    Asplenium         Xinexpectatum ( E.L.      Braun   1940 )     Morton(1956)   |{"scientificName":{"parsed":true, "verbatim":"   Asplenium         Xinexpectatum ( E.L.      Braun   1940 )     Morton(1956)   ", "normalized":"Asplenium × inexpectatum (E.L. Braun 1940) Morton 1956", "canonical":"Asplenium inexpectatum", "namedHybrid":{"genus":{"epitheton":"Asplenium"}, "species":{"epitheton":"inexpectatum", "authorship":"( E.L.      Braun   1940 )     Morton(1956)", "combinationAuthorTeam":{"authorTeam":"Morton", "author":["Morton"], "year":"1956"}, "basionymAuthorTeam":{"authorTeam":"E.L.      Braun", "author":["E.L. Braun"], "year":"1940"}}}}}
+   
+   
+####
+#
+# Names with problems
+#
+####
+
+#double parenthesis
+Eichornia crassipes ( (Martius) ) Solms-Laub.|{"scientificName":{"parsed":true, "verbatim":"Eichornia crassipes ( (Martius) ) Solms-Laub.", "normalized":"Eichornia crassipes (Martius) Solms-Laub.", "canonical":"Eichornia crassipes", "genus":{"epitheton":"Eichornia"}, "species":{"epitheton":"crassipes", "authorship":"( (Martius) ) Solms-Laub.", "combinationAuthorTeam":{"authorTeam":"Solms-Laub.", "author":["Solms-Laub."]}, "basionymAuthorTeam":{"authorTeam":"Martius", "author":["Martius"]}}}}
+
+#year without authorship
+Acarospora cratericola 1929|{"scientificName":{"parsed":true, "verbatim":"Acarospora cratericola 1929", "normalized":"Acarospora cratericola 1929", "canonical":"Acarospora cratericola", "genus":{"epitheton":"Acarospora"}, "species":{"epitheton":"cratericola", "year":"1929"}}}
+
+
+#year range
+Tridentella tangeroae Bruce, 1987-92|{"scientificName":{"parsed":true, "verbatim":"Tridentella tangeroae Bruce, 1987-92", "normalized":"Tridentella tangeroae Bruce 1987-92", "canonical":"Tridentella tangeroae", "genus":{"epitheton":"Tridentella"}, "species":{"epitheton":"tangeroae", "authorship":"Bruce, 1987-92", "basionymAuthorTeam":{"authorTeam":"Bruce", "author":["Bruce"], "year":"1987-92"}}}}
+
+#year in square brackets
+Anthoscopus Cabanis [1851]|{"scientificName":{"parsed":true, "verbatim":"Anthoscopus Cabanis [1851]", "normalized":"Anthoscopus Cabanis (1851)", "canonical":"Anthoscopus", "uninomial":{"epitheton":"Anthoscopus", "authorship":"Cabanis [1851]", "basionymAuthorTeam":{"authorTeam":"Cabanis", "author":["Cabanis"], "approximate_year":"(1851)"}}}}
+Anthoscopus Cabanis [185?]|{"scientificName":{"parsed":true, "verbatim":"Anthoscopus Cabanis [185?]", "normalized":"Anthoscopus Cabanis (185?)", "canonical":"Anthoscopus", "uninomial":{"epitheton":"Anthoscopus", "authorship":"Cabanis [185?]", "basionymAuthorTeam":{"authorTeam":"Cabanis", "author":["Cabanis"], "approximate_year":"(185?)"}}}}
+Anthoscopus Cabanis [1851?]|{"scientificName":{"parsed":true, "verbatim":"Anthoscopus Cabanis [1851?]", "normalized":"Anthoscopus Cabanis (1851?)", "canonical":"Anthoscopus", "uninomial":{"epitheton":"Anthoscopus", "authorship":"Cabanis [1851?]", "basionymAuthorTeam":{"authorTeam":"Cabanis", "author":["Cabanis"], "approximate_year":"(1851?)"}}}}
+Anthoscopus Cabanis [1851]|{"scientificName":{"parsed":true, "verbatim":"Anthoscopus Cabanis [1851]", "normalized":"Anthoscopus Cabanis (1851)", "canonical":"Anthoscopus", "uninomial":{"epitheton":"Anthoscopus", "authorship":"Cabanis [1851]", "basionymAuthorTeam":{"authorTeam":"Cabanis", "author":["Cabanis"], "approximate_year":"(1851)"}}}}
+Anthoscopus Cabanis [1851?]|{"scientificName":{"parsed":true, "verbatim":"Anthoscopus Cabanis [1851?]", "normalized":"Anthoscopus Cabanis (1851?)", "canonical":"Anthoscopus", "uninomial":{"epitheton":"Anthoscopus", "authorship":"Cabanis [1851?]", "basionymAuthorTeam":{"authorTeam":"Cabanis", "author":["Cabanis"], "approximate_year":"(1851?)"}}}}
+Trismegistia monodii Ando, 1973 [1974]|{"scientificName":{"parsed":true, "verbatim":"Trismegistia monodii Ando, 1973 [1974]", "normalized":"Trismegistia monodii Ando 1973 (1974)", "canonical":"Trismegistia monodii", "genus":{"epitheton":"Trismegistia"}, "species":{"epitheton":"monodii", "authorship":"Ando, 1973 [1974]", "basionymAuthorTeam":{"authorTeam":"Ando", "author":["Ando"], "year":"1973", "approximate_year":"(1974)"}}}}
+Zygaena witti Wiegel [1973]|{"scientificName":{"parsed":true, "verbatim":"Zygaena witti Wiegel [1973]", "normalized":"Zygaena witti Wiegel (1973)", "canonical":"Zygaena witti", "genus":{"epitheton":"Zygaena"}, "species":{"epitheton":"witti", "authorship":"Wiegel [1973]", "basionymAuthorTeam":{"authorTeam":"Wiegel", "author":["Wiegel"], "approximate_year":"(1973)"}}}}
+Deyeuxia coarctata Kunth, 1815 [1816]|{"scientificName":{"parsed":true, "verbatim":"Deyeuxia coarctata Kunth, 1815 [1816]", "normalized":"Deyeuxia coarctata Kunth 1815 (1816)", "canonical":"Deyeuxia coarctata", "genus":{"epitheton":"Deyeuxia"}, "species":{"epitheton":"coarctata", "authorship":"Kunth, 1815 [1816]", "basionymAuthorTeam":{"authorTeam":"Kunth", "author":["Kunth"], "year":"1815", "approximate_year":"(1816)"}}}}
+
+#salvage canonical
+Morea ssjjlajajaj324$33 234243242|{"scientificName":{"parsed":true, "verbatim":"Morea ssjjlajajaj324$33 234243242", "normalized":"Morea", "canonical":"Morea", "uninomial":{"epitheton":"Morea"}}}
+Morea (Morea) Burt 2342343242 23424322342 23424234|{"scientificName":{"parsed":true, "verbatim":"Morea (Morea) Burt 2342343242 23424322342 23424234", "normalized":"Morea (Morea)", "canonical":"Morea Morea", "genus":{"epitheton":"Morea"}, "subgenus":{"epitheton":"Morea"}}}
+Morea (Morea) burtius 2342343242 23424322342 23424234|{"scientificName":{"parsed":true, "verbatim":"Morea (Morea) burtius 2342343242 23424322342 23424234", "normalized":"Morea (Morea) burtius", "canonical":"Morea Morea burtius", "genus":{"epitheton":"Morea"}, "subgenus":{"epitheton":"Morea"}, "species":{"epitheton":"burtius"}}}
+Verpericola megasoma ""Dall" Pils.|{"scientificName":{"parsed":true, "verbatim":"Verpericola megasoma \"\"Dall\" Pils.", "normalized":"Verpericola megasoma", "canonical":"Verpericola megasoma", "genus":{"epitheton":"Verpericola"}, "species":{"epitheton":"megasoma"}}} 
+Moraea spathulata ( (L. f. Klatt|{"scientificName":{"parsed":true, "verbatim":"Moraea spathulata ( (L. f. Klatt", "normalized":"Moraea spathulata", "canonical":"Moraea spathulata", "genus":{"epitheton":"Moraea"}, "species":{"epitheton":"spathulata"}}}
