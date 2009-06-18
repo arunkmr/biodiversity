@@ -360,6 +360,7 @@ describe ScientificNameClean do
     canonical(sn).should == "Sphaerotheca fuliginea dahliae"
     details(sn).should ==  {:genus=>{:epitheton=>"Sphaerotheca"}, :species=>{:epitheton=>"fuliginea"}, :infraspecies=>{:epitheton=>"dahliae", :rank=>"f.", :authorship=>"Movss.     1967", :basionymAuthorTeam=>{:authorTeam=>"Movss.", :author=>["Movss."], :year=>"1967"}}}
     pos(sn).should == {0=>["genus", 12], 16=>["species", 25], 36=>["infraspecies", 43], 47=>["author_word", 53], 58=>["year", 62]}
+    parse('Polypodium vulgare nothosubsp. mantoniae (Rothm.) Schidlay').should_not be_nil
   end
   
   it "should parse name with several subspecies names NOT BOTANICAL CODE BUT NOT INFREQUENT" do

@@ -334,7 +334,7 @@ grammar ScientificNameClean
   end
   
   rule rank
-    ("morph."/"f.sp."/"B"/"ssp."/"mut."/"nat"/"pseudovar."/"sect."/"ser."/"var."/"subvar."/ "[var.]" /"subsp."/"subf."/"race"/"α" 
+    ("morph."/"f.sp."/"B"/"ssp."/"mut."/"nat"/"nothosubsp."/"pseudovar."/"sect."/"ser."/"var."/"subvar."/ "[var.]" /"subsp."/"subf."/"race"/"α" 
     /"ββ"/"β"/"γ"/"δ"/"ε"/"φ"/"θ"/"μ"/"a."/"b."/"c."/"d."/"e."/"g."/"k."/"****"/"**"/"*")
     {
       def value
@@ -886,7 +886,7 @@ grammar ScientificNameClean
     /
     a:"X" space b:species_word {
       def value
-        "x " + b.value
+        "× " + b.value
       end
       
       def canonical
@@ -904,7 +904,7 @@ grammar ScientificNameClean
     /
     a:"x" space_hard b:species_word {
       def value
-        "x " + b.value
+        "× " + b.value
       end
       
       def canonical
