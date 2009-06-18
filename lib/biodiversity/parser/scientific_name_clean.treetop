@@ -2,7 +2,7 @@
 grammar ScientificNameClean
 
   rule root
-    space a:scientific_name_4 space {
+    space a:scientific_name_5 space {
       def value
         a.value.gsub(/\s{2,}/, ' ').strip
       end
@@ -19,6 +19,28 @@ grammar ScientificNameClean
         a.details
       end
     }
+  end
+  
+  rule scientific_name_5
+    a:scientific_name_1 space b:taxon_concept_rank space c:authorship {
+      def value
+        a.value + " " + b.apply(c)
+      end
+    
+      def canonical
+        a.canonical
+      end
+      
+      def pos
+        a.pos.merge(c.pos)
+      end
+    
+      def details
+        a.details.merge(b.details(c))
+      end
+    }
+    /
+    scientific_name_4
   end
   
   rule scientific_name_4
@@ -140,7 +162,7 @@ grammar ScientificNameClean
   
   
   rule multinomial_name
-    a:genus space b:subgenus space c:species space_hard d:infraspecies {
+    a:genus space b:subgenus space c:species space_hard d:infraspecies_mult {
       def value
         a.value + " " + b.value + " " + c.value + " " + d.value
       end
@@ -176,7 +198,7 @@ grammar ScientificNameClean
       end
     }
     /
-    a:genus space_hard b:species space_hard c:infraspecies {
+    a:genus space_hard b:species space_hard c:infraspecies_mult {
       def value
         a.value + " " + b.value + " " + c.value 
       end
@@ -213,6 +235,31 @@ grammar ScientificNameClean
     }
   end
   
+  rule infraspecies_mult
+    a:infraspecies space b:infraspecies_mult {
+      def value
+        a.value + " " + b.value
+      end
+      
+      def canonical
+        a.canonical + " " + b.canonical
+      end
+      
+      def pos
+        a.pos.merge(b.pos)
+      end
+      
+      def details
+        #{:infraspecies => a.details[:infraspceies] << b.details[:infraspecies]}
+        a_array =  a.details[:infraspecies].class == Array ? a.details[:infraspecies] : [a.details[:infraspecies]] 
+        b_array = b.details[:infraspecies].class == Array ? b.details[:infraspecies] : [b.details[:infraspecies]]
+        a.details.merge({:infraspecies => a_array + b_array})
+      end
+    }
+    /
+    infraspecies
+  end
+  
   rule infraspecies
     a:infraspecies_epitheton space b:authorship {
       def value
@@ -232,7 +279,7 @@ grammar ScientificNameClean
       end
     }
     /
-    infraspecies_epitheton
+    infraspecies_epitheton 
   end
   
   rule infraspecies_epitheton
@@ -269,6 +316,20 @@ grammar ScientificNameClean
       def details
         {:infraspecies => {:epitheton => value, :rank => 'n/a'}}
       end
+    }
+  end
+  
+  rule taxon_concept_rank
+    "sec." {
+      def value
+        "sec."
+      end
+      def apply(a)
+        " " + value + " " + a.value
+      end
+      def details(a = nil)
+        {:taxon_concept => a.details}
+      end    
     }
   end
   
@@ -859,6 +920,14 @@ grammar ScientificNameClean
       end
     }
   end
+  
+  #rule species_word
+  ##  (!"sensu" a:species_word_0) {
+   #   def value
+  #      a.value
+  #    end
+  #  }
+  #end
   
   rule species_word
     a:[0-9]+ "-"? b:latin_word {

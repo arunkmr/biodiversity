@@ -22,11 +22,11 @@ module ScientificNameClean
 
   module Root1
     def value
-      a.value.gsub(/\s{2,}/, ' ')
+      a.value.gsub(/\s{2,}/, ' ').strip
     end
     
     def canonical
-      a.canonical.gsub(/\s{2,}/, ' ')
+      a.canonical.gsub(/\s{2,}/, ' ').strip
     end
     
     def pos
@@ -50,7 +50,7 @@ module ScientificNameClean
     r1 = _nt_space
     s0 << r1
     if r1
-      r2 = _nt_scientific_name_3
+      r2 = _nt_scientific_name_5
       s0 << r2
       if r2
         r3 = _nt_space
@@ -67,6 +67,270 @@ module ScientificNameClean
     end
 
     node_cache[:root][start_index] = r0
+
+    return r0
+  end
+
+  module ScientificName50
+    def a
+      elements[0]
+    end
+
+    def space
+      elements[1]
+    end
+
+    def b
+      elements[2]
+    end
+
+    def space
+      elements[3]
+    end
+
+    def c
+      elements[4]
+    end
+  end
+
+  module ScientificName51
+    def value
+      a.value + " " + b.apply(c)
+    end
+  
+    def canonical
+      a.canonical
+    end
+    
+    def pos
+      a.pos.merge(c.pos)
+    end
+  
+    def details
+      a.details.merge(b.details(c))
+    end
+  end
+
+  def _nt_scientific_name_5
+    start_index = index
+    if node_cache[:scientific_name_5].has_key?(index)
+      cached = node_cache[:scientific_name_5][index]
+      @index = cached.interval.end if cached
+      return cached
+    end
+
+    i0 = index
+    i1, s1 = index, []
+    r2 = _nt_scientific_name_1
+    s1 << r2
+    if r2
+      r3 = _nt_space
+      s1 << r3
+      if r3
+        r4 = _nt_taxon_concept_rank
+        s1 << r4
+        if r4
+          r5 = _nt_space
+          s1 << r5
+          if r5
+            r6 = _nt_authorship
+            s1 << r6
+          end
+        end
+      end
+    end
+    if s1.last
+      r1 = instantiate_node(SyntaxNode,input, i1...index, s1)
+      r1.extend(ScientificName50)
+      r1.extend(ScientificName51)
+    else
+      self.index = i1
+      r1 = nil
+    end
+    if r1
+      r0 = r1
+    else
+      r7 = _nt_scientific_name_4
+      if r7
+        r0 = r7
+      else
+        self.index = i0
+        r0 = nil
+      end
+    end
+
+    node_cache[:scientific_name_5][start_index] = r0
+
+    return r0
+  end
+
+  module ScientificName40
+    def a
+      elements[0]
+    end
+
+    def space
+      elements[1]
+    end
+
+    def hybrid_character
+      elements[2]
+    end
+
+    def space
+      elements[3]
+    end
+
+    def b
+      elements[4]
+    end
+  end
+
+  module ScientificName41
+    def value
+      a.value + " × " + b.value
+    end
+    
+    def canonical
+      a.canonical + " " + b.canonical
+    end
+    
+    def pos
+      a.pos.merge(b.pos)
+    end
+    
+    def details
+      {:hybridFormula => [a.details, b.details]}
+    end
+  end
+
+  module ScientificName42
+    def a
+      elements[0]
+    end
+
+    def space
+      elements[1]
+    end
+
+    def hybrid_character
+      elements[2]
+    end
+
+    def space
+      elements[3]
+    end
+
+  end
+
+  module ScientificName43
+    def value
+      a.value + " × ?"
+    end
+    
+    def canonical
+      a.canonical
+    end
+    
+    def pos
+      a.pos
+    end
+    
+    def details
+      {:hybridFormula => [a.details, "?"]}
+    end
+  end
+
+  def _nt_scientific_name_4
+    start_index = index
+    if node_cache[:scientific_name_4].has_key?(index)
+      cached = node_cache[:scientific_name_4][index]
+      @index = cached.interval.end if cached
+      return cached
+    end
+
+    i0 = index
+    i1, s1 = index, []
+    r2 = _nt_scientific_name_1
+    s1 << r2
+    if r2
+      r3 = _nt_space
+      s1 << r3
+      if r3
+        r4 = _nt_hybrid_character
+        s1 << r4
+        if r4
+          r5 = _nt_space
+          s1 << r5
+          if r5
+            r6 = _nt_scientific_name_1
+            s1 << r6
+          end
+        end
+      end
+    end
+    if s1.last
+      r1 = instantiate_node(SyntaxNode,input, i1...index, s1)
+      r1.extend(ScientificName40)
+      r1.extend(ScientificName41)
+    else
+      self.index = i1
+      r1 = nil
+    end
+    if r1
+      r0 = r1
+    else
+      i7, s7 = index, []
+      r8 = _nt_scientific_name_1
+      s7 << r8
+      if r8
+        r9 = _nt_space
+        s7 << r9
+        if r9
+          r10 = _nt_hybrid_character
+          s7 << r10
+          if r10
+            r11 = _nt_space
+            s7 << r11
+            if r11
+              if input.index(Regexp.new('[\\?]'), index) == index
+                r13 = instantiate_node(SyntaxNode,input, index...(index + 1))
+                @index += 1
+              else
+                r13 = nil
+              end
+              if r13
+                r12 = r13
+              else
+                r12 = instantiate_node(SyntaxNode,input, index...index)
+              end
+              s7 << r12
+            end
+          end
+        end
+      end
+      if s7.last
+        r7 = instantiate_node(SyntaxNode,input, i7...index, s7)
+        r7.extend(ScientificName42)
+        r7.extend(ScientificName43)
+      else
+        self.index = i7
+        r7 = nil
+      end
+      if r7
+        r0 = r7
+      else
+        r14 = _nt_scientific_name_3
+        if r14
+          r0 = r14
+        else
+          self.index = i0
+          r0 = nil
+        end
+      end
+    end
+
+    node_cache[:scientific_name_4][start_index] = r0
 
     return r0
   end
@@ -344,37 +608,25 @@ module ScientificNameClean
       return cached
     end
 
-    i0 = index
-    i1, s1 = index, []
-    r2 = _nt_latin_word
-    s1 << r2
-    if r2
+    i0, s0 = index, []
+    r1 = _nt_latin_word
+    s0 << r1
+    if r1
       if input.index(Regexp.new('[\\.]'), index) == index
-        r3 = instantiate_node(SyntaxNode,input, index...(index + 1))
+        r2 = instantiate_node(SyntaxNode,input, index...(index + 1))
         @index += 1
       else
-        r3 = nil
+        r2 = nil
       end
-      s1 << r3
+      s0 << r2
     end
-    if s1.last
-      r1 = instantiate_node(SyntaxNode,input, i1...index, s1)
-      r1.extend(StatusWord0)
-      r1.extend(StatusWord1)
+    if s0.last
+      r0 = instantiate_node(SyntaxNode,input, i0...index, s0)
+      r0.extend(StatusWord0)
+      r0.extend(StatusWord1)
     else
-      self.index = i1
-      r1 = nil
-    end
-    if r1
-      r0 = r1
-    else
-      r4 = _nt_latin_word
-      if r4
-        r0 = r4
-      else
-        self.index = i0
-        r0 = nil
-      end
+      self.index = i0
+      r0 = nil
     end
 
     node_cache[:status_word][start_index] = r0
@@ -570,7 +822,7 @@ module ScientificNameClean
               r7 = _nt_space_hard
               s1 << r7
               if r7
-                r8 = _nt_infraspecies
+                r8 = _nt_infraspecies_mult
                 s1 << r8
               end
             end
@@ -632,7 +884,7 @@ module ScientificNameClean
               r19 = _nt_space_hard
               s15 << r19
               if r19
-                r20 = _nt_infraspecies
+                r20 = _nt_infraspecies_mult
                 s15 << r20
               end
             end
@@ -679,6 +931,86 @@ module ScientificNameClean
     end
 
     node_cache[:multinomial_name][start_index] = r0
+
+    return r0
+  end
+
+  module InfraspeciesMult0
+    def a
+      elements[0]
+    end
+
+    def space
+      elements[1]
+    end
+
+    def b
+      elements[2]
+    end
+  end
+
+  module InfraspeciesMult1
+    def value
+      a.value + " " + b.value
+    end
+    
+    def canonical
+      a.canonical + " " + b.canonical
+    end
+    
+    def pos
+      a.pos.merge(b.pos)
+    end
+    
+    def details
+      #{:infraspecies => a.details[:infraspceies] << b.details[:infraspecies]}
+      a_array =  a.details[:infraspecies].class == Array ? a.details[:infraspecies] : [a.details[:infraspecies]] 
+      b_array = b.details[:infraspecies].class == Array ? b.details[:infraspecies] : [b.details[:infraspecies]]
+      a.details.merge({:infraspecies => a_array + b_array})
+    end
+  end
+
+  def _nt_infraspecies_mult
+    start_index = index
+    if node_cache[:infraspecies_mult].has_key?(index)
+      cached = node_cache[:infraspecies_mult][index]
+      @index = cached.interval.end if cached
+      return cached
+    end
+
+    i0 = index
+    i1, s1 = index, []
+    r2 = _nt_infraspecies
+    s1 << r2
+    if r2
+      r3 = _nt_space
+      s1 << r3
+      if r3
+        r4 = _nt_infraspecies_mult
+        s1 << r4
+      end
+    end
+    if s1.last
+      r1 = instantiate_node(SyntaxNode,input, i1...index, s1)
+      r1.extend(InfraspeciesMult0)
+      r1.extend(InfraspeciesMult1)
+    else
+      self.index = i1
+      r1 = nil
+    end
+    if r1
+      r0 = r1
+    else
+      r5 = _nt_infraspecies
+      if r5
+        r0 = r5
+      else
+        self.index = i0
+        r0 = nil
+      end
+    end
+
+    node_cache[:infraspecies_mult][start_index] = r0
 
     return r0
   end
@@ -883,6 +1215,40 @@ module ScientificNameClean
     end
 
     node_cache[:infraspecies_epitheton][start_index] = r0
+
+    return r0
+  end
+
+  module TaxonConceptRank0
+    def value
+      "sec."
+    end
+    def apply(a)
+      " " + value + " " + a.value
+    end
+    def details(a = nil)
+      {:taxon_concept => a.details}
+    end
+  end
+
+  def _nt_taxon_concept_rank
+    start_index = index
+    if node_cache[:taxon_concept_rank].has_key?(index)
+      cached = node_cache[:taxon_concept_rank][index]
+      @index = cached.interval.end if cached
+      return cached
+    end
+
+    if input.index("sec.", index) == index
+      r0 = instantiate_node(SyntaxNode,input, index...(index + 4))
+      r0.extend(TaxonConceptRank0)
+      @index += 4
+    else
+      terminal_parse_failure("sec.")
+      r0 = nil
+    end
+
+    node_cache[:taxon_concept_rank][start_index] = r0
 
     return r0
   end
@@ -3119,6 +3485,23 @@ module ScientificNameClean
     end
   end
 
+  module AuthorWord4
+  end
+
+  module AuthorWord5
+    def value
+      text_value
+    end
+    
+    def pos
+      {interval.begin => ['author_word', interval.end]}
+    end
+    
+    def details
+      {:author => [value]}
+    end
+  end
+
   def _nt_author_word
     start_index = index
     if node_cache[:author_word].has_key?(index)
@@ -3315,7 +3698,7 @@ module ScientificNameClean
                               if r20
                                 r8 = r20
                               else
-                                if input.index(Regexp.new('[A-Z]'), index) == index
+                                if input.index(Regexp.new('[A-W]'), index) == index
                                   r21 = instantiate_node(SyntaxNode,input, index...(index + 1))
                                   @index += 1
                                 else
@@ -3324,8 +3707,18 @@ module ScientificNameClean
                                 if r21
                                   r8 = r21
                                 else
-                                  self.index = i8
-                                  r8 = nil
+                                  if input.index(Regexp.new('[Y-Z]'), index) == index
+                                    r22 = instantiate_node(SyntaxNode,input, index...(index + 1))
+                                    @index += 1
+                                  else
+                                    r22 = nil
+                                  end
+                                  if r22
+                                    r8 = r22
+                                  else
+                                    self.index = i8
+                                    r8 = nil
+                                  end
                                 end
                               end
                             end
@@ -3341,22 +3734,22 @@ module ScientificNameClean
         end
         s7 << r8
         if r8
-          s22, i22 = [], index
+          s23, i23 = [], index
           loop do
-            if input.index(Regexp.new('[^0-9()\\s&,]'), index) == index
-              r23 = instantiate_node(SyntaxNode,input, index...(index + 1))
+            if input.index(Regexp.new('[^0-9\\[\\]\\(\\)\\s&,]'), index) == index
+              r24 = instantiate_node(SyntaxNode,input, index...(index + 1))
               @index += 1
             else
-              r23 = nil
+              r24 = nil
             end
-            if r23
-              s22 << r23
+            if r24
+              s23 << r24
             else
               break
             end
           end
-          r22 = instantiate_node(SyntaxNode,input, i22...index, s22)
-          s7 << r22
+          r23 = instantiate_node(SyntaxNode,input, i23...index, s23)
+          s7 << r23
         end
         if s7.last
           r7 = instantiate_node(SyntaxNode,input, i7...index, s7)
@@ -3369,12 +3762,56 @@ module ScientificNameClean
         if r7
           r0 = r7
         else
-          r24 = _nt_author_prefix_word
-          if r24
-            r0 = r24
+          i25, s25 = index, []
+          if input.index("X", index) == index
+            r26 = instantiate_node(SyntaxNode,input, index...(index + 1))
+            @index += 1
           else
-            self.index = i0
-            r0 = nil
+            terminal_parse_failure("X")
+            r26 = nil
+          end
+          s25 << r26
+          if r26
+            s27, i27 = [], index
+            loop do
+              if input.index(Regexp.new('[^0-9\\[\\]\\(\\)\\s&,]'), index) == index
+                r28 = instantiate_node(SyntaxNode,input, index...(index + 1))
+                @index += 1
+              else
+                r28 = nil
+              end
+              if r28
+                s27 << r28
+              else
+                break
+              end
+            end
+            if s27.empty?
+              self.index = i27
+              r27 = nil
+            else
+              r27 = instantiate_node(SyntaxNode,input, i27...index, s27)
+            end
+            s25 << r27
+          end
+          if s25.last
+            r25 = instantiate_node(SyntaxNode,input, i25...index, s25)
+            r25.extend(AuthorWord4)
+            r25.extend(AuthorWord5)
+          else
+            self.index = i25
+            r25 = nil
+          end
+          if r25
+            r0 = r25
+          else
+            r29 = _nt_author_prefix_word
+            if r29
+              r0 = r29
+            else
+              self.index = i0
+              r0 = nil
+            end
           end
         end
       end
@@ -4774,7 +5211,7 @@ module ScientificNameClean
 
   module HybridCharacter0
     def value
-      "x"
+      "×"
     end
   end
 

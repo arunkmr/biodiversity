@@ -362,6 +362,17 @@ describe ScientificNameClean do
     pos(sn).should == {0=>["genus", 12], 16=>["species", 25], 36=>["infraspecies", 43], 47=>["author_word", 53], 58=>["year", 62]}
   end
   
+  it "should parse name with several subspecies names NOT BOTANICAL CODE BUT NOT INFREQUENT" do
+    sn = "Hydnellum scrobiculatum var. zonatum f. parvum (Banker) D. Hall & D.E. Stuntz 1972"
+    parse(sn).should_not be_nil
+    value(sn).should == "Hydnellum scrobiculatum var. zonatum f. parvum (Banker) D. Hall et D.E. Stuntz 1972"
+    details(sn).should ==  {:genus=>{:epitheton=>"Hydnellum"}, :species=>{:epitheton=>"scrobiculatum"}, :infraspecies=>[{:epitheton=>"zonatum", :rank=>"var."}, {:epitheton=>"parvum", :rank=>"f.", :authorship=>"(Banker) D. Hall & D.E. Stuntz 1972", :combinationAuthorTeam=>{:authorTeam=>"D. Hall & D.E. Stuntz", :author=>["D. Hall", "D.E. Stuntz"], :year=>"1972"}, :basionymAuthorTeam=>{:authorTeam=>"Banker", :author=>["Banker"]}}]}
+    pos(sn).should ==  {0=>["genus", 9], 10=>["species", 23], 29=>["infraspecies", 36], 40=>["infraspecies", 46], 48=>["author_word", 54], 56=>["author_word", 58], 59=>["author_word", 63], 66=>["author_word", 70], 71=>["author_word", 77], 78=>["year", 82]}
+    parse('Senecio fuchsii C.C.Gmel. subsp. fuchsii var. expansus (Boiss. & Heldr.) Hayek').should_not be_nil
+    parse('Senecio fuchsii C.C.Gmel. subsp. fuchsii var. fuchsii').should_not be_nil
+  end
+  
+  
   it "should parse status BOTANICAL RARE" do
     #it is always latin abbrev often 2 words
     sn = "Arthopyrenia hyalospora (Nyl.) R.C. Harris comb. nov."
@@ -400,7 +411,7 @@ describe ScientificNameClean do
     details(sn).should == {:genus=>{:epitheton=>"Salmonella"}, :species=>{:epitheton=>"werahensis", :authorship=>"(Castellani) Hauduroy and Ehringer in Hauduroy 1937", :combinationAuthorTeam=>{:authorTeam=>"Hauduroy and Ehringer", :author=>["Hauduroy", "Ehringer"], :exAuthorTeam=>{:authorTeam=>"Hauduroy", :author=>["Hauduroy"], :year=>"1937"}}, :basionymAuthorTeam=>{:authorTeam=>"Castellani", :author=>["Castellani"]}}}
     pos(sn).should == {0=>["genus", 10], 11=>["species", 21], 23=>["author_word", 33], 35=>["author_word", 43], 48=>["author_word", 56], 60=>["author_word", 68], 69=>["year", 73]}
   end
-  
+    
   it 'should parse named hybrids' do
     [
       ["×Agropogon P. Fourn. 1934", {:namedHybrid=>{:uninomial=>{:epitheton=>"Agropogon", :authorship=>"P. Fourn. 1934", :basionymAuthorTeam=>{:authorTeam=>"P. Fourn.", :author=>["P. Fourn."], :year=>"1934"}}}}],
@@ -451,6 +462,17 @@ describe ScientificNameClean do
     parse(sn).should_not be_nil
     details(sn).should == {:hybridFormula=>[{:genus=>{:epitheton=>"Arthopyrenia"}, :species=>{:epitheton=>"hyalospora"}}, "?"]}
     pos(sn).should == {0=>["genus", 12], 13=>["species", 23]}
+  end
+  
+  it 'should parse names with taxon concept' do
+    sn = "Sténométope laevissimus sec. Eschmeyer 2004"
+    val = @parser.failure_reason.to_s.match(/column [0-9]*/).to_s().gsub(/column /,'')
+    details(sn).should == {:genus=>{:epitheton=>"Sténométope"}, :species=>{:epitheton=>"laevissimus"}, :taxon_concept=>{:authorship=>"Eschmeyer 2004", :basionymAuthorTeam=>{:authorTeam=>"Eschmeyer", :author=>["Eschmeyer"], :year=>"2004"}}}
+    pos(sn).should == {0=>["genus", 11], 12=>["species", 23], 29=>["author_word", 38], 39=>["year", 43]}
+    sn = "Sténométope laevissimus Bibron 1855 sec. Eschmeyer 2004"
+    parse(sn).should_not be_nil
+    details(sn).should == {:genus=>{:epitheton=>"Sténométope"}, :species=>{:epitheton=>"laevissimus", :authorship=>"Bibron 1855", :basionymAuthorTeam=>{:authorTeam=>"Bibron", :author=>["Bibron"], :year=>"1855"}}, :taxon_concept=>{:authorship=>"Eschmeyer 2004", :basionymAuthorTeam=>{:authorTeam=>"Eschmeyer", :author=>["Eschmeyer"], :year=>"2004"}}}
+    pos(sn).should == {0=>["genus", 11], 12=>["species", 23], 24=>["author_word", 30], 31=>["year", 35], 41=>["author_word", 50], 51=>["year", 55]}
   end
   
   it 'should parse names with spaces inconsistencies at the start and the end and in the middle' do
