@@ -73,26 +73,6 @@ describe ScientificNameClean do
     pos(sn).should ==  {0=>["genus", 9], 10=>["species", 23], 29=>["subspecies", 36], 40=>["subspecies", 46], 48=>["author_word", 54], 56=>["author_word", 58], 59=>["author_word", 63], 66=>["author_word", 70], 71=>["author_word", 77], 78=>["year", 82]}
   end
 
-
-  
-  it "should parse multiplication sign" do
-    sn = "Arthopyrenia x hyalospora (Nyl.) R.C. Harris"
-    parse(sn).should_not be_nil
-    details(sn).should == {:genus=>"Arthopyrenia", :species=>"hyalospora", :cross=>"inside", :orig_authors=>{:names=>["Nyl."]}, :authors=>{:names=>["R.C. Harris"]}, :name_part_verbatim=>"Arthopyrenia x hyalospora", :auth_part_verbatim=>"(Nyl.) R.C. Harris"}
-    pos(sn).should == {0=>["genus", 12], 15=>["species", 25], 27=>["author_word", 31], 33=>["author_word", 37], 38=>["author_word", 44]}
-    parse("Arthopyrenia X hyalospora(Nyl. ex Banker) R.C. Harris").should_not be_nil
-    sn = "x Arthopyrenia hyalospora (Nyl. ex Banker) R.C. Harris"
-    parse(sn).should_not be_nil
-    details(sn).should ==  {:genus=>"Arthopyrenia", :species=>"hyalospora", :cross=>"before", :original_revised_name_authors=>{:revised_authors=>{:names=>["Nyl."]}, :authors=>{:names=>["Banker"]}}, :authors=>{:names=>["R.C. Harris"]}, :name_part_verbatim=>"x Arthopyrenia hyalospora", :auth_part_verbatim=>"(Nyl. ex Banker) R.C. Harris"}
-    pos(sn).should == {2=>["genus", 14], 15=>["species", 25], 27=>["author_word", 31], 35=>["author_word", 41], 43=>["author_word", 47], 48=>["author_word", 54]}
-    sn = "X Arthopyrenia (Nyl. ex Banker) R.C. Harris"
-    parse(sn).should_not be_nil
-    details(sn).should == {:uninomial=>"Arthopyrenia", :cross=>"before", :original_revised_name_authors=>{:revised_authors=>{:names=>["Nyl."]}, :authors=>{:names=>["Banker"]}}, :authors=>{:names=>["R.C. Harris"]}, :name_part_verbatim=>"X Arthopyrenia", :auth_part_verbatim=>"(Nyl. ex Banker) R.C. Harris"}
-    pos(sn).should == {2=>["uninomial", 14], 16=>["author_word", 20], 24=>["author_word", 30], 32=>["author_word", 36], 37=>["author_word", 43]}
-    #ascii for multiplication
-    parse("Melampsora × columbiana G. Newc. 2000").should_not be_nil
-  end
-  
   it "should parse hybrid combination" do
     sn = "Arthopyrenia hyalospora X Hydnellum scrobiculatum"
     parse(sn).should_not be_nil

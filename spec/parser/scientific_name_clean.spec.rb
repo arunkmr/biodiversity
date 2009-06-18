@@ -429,8 +429,31 @@ describe ScientificNameClean do
    end
   end
   
+  it "should parse hybrid combination" do
+    sn = "Arthopyrenia hyalospora X Hydnellum scrobiculatum"
+    parse(sn).should_not be_nil    
+    value(sn).should == "Arthopyrenia hyalospora \303\227 Hydnellum scrobiculatum"
+    canonical(sn).should == "Arthopyrenia hyalospora Hydnellum scrobiculatum"
+    details(sn).should == {:hybridFormula=>[{:genus=>{:epitheton=>"Arthopyrenia"}, :species=>{:epitheton=>"hyalospora"}}, {:genus=>{:epitheton=>"Hydnellum"}, :species=>{:epitheton=>"scrobiculatum"}}]}
+    pos(sn).should == {0=>["genus", 12], 13=>["species", 23], 26=>["genus", 35], 36=>["species", 49]}
+    sn = "Arthopyrenia hyalospora (Banker) D. Hall X Hydnellum scrobiculatum D.E. Stuntz"
+    parse(sn).should_not be_nil
+    value(sn).should == "Arthopyrenia hyalospora (Banker) D. Hall \303\227 Hydnellum scrobiculatum D.E. Stuntz"
+    canonical(sn).should == "Arthopyrenia hyalospora Hydnellum scrobiculatum"
+    pos(sn).should == {0=>["genus", 12], 13=>["species", 23], 25=>["author_word", 31], 33=>["author_word", 35], 36=>["author_word", 40], 43=>["genus", 52], 53=>["species", 66], 67=>["author_word", 71], 72=>["author_word", 78]}
+    value("Arthopyrenia hyalospora X").should == "Arthopyrenia hyalospora \303\227 ?"  
+    sn = "Arthopyrenia hyalospora x"
+    parse(sn).should_not be_nil
+    canonical(sn).should == "Arthopyrenia hyalospora"
+    details(sn).should == {:hybridFormula=>[{:genus=>{:epitheton=>"Arthopyrenia"}, :species=>{:epitheton=>"hyalospora"}}, "?"]}
+    pos(sn).should == {0=>["genus", 12], 13=>["species", 23]}
+    sn = "Arthopyrenia hyalospora × ?"
+    parse(sn).should_not be_nil
+    details(sn).should == {:hybridFormula=>[{:genus=>{:epitheton=>"Arthopyrenia"}, :species=>{:epitheton=>"hyalospora"}}, "?"]}
+    pos(sn).should == {0=>["genus", 12], 13=>["species", 23]}
+  end
   
-  it 'should parse names with spaces at the start and the end' do
+  it 'should parse names with spaces inconsistencies at the start and the end and in the middle' do
     parse("   Asplenium X inexpectatum (E.L. Braun 1940) Morton (1956)   ").should_not be_nil
   end
   

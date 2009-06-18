@@ -2,13 +2,13 @@
 grammar ScientificNameClean
 
   rule root
-    space a:scientific_name_3 space {
+    space a:scientific_name_4 space {
       def value
-        a.value.gsub(/\s{2,}/, ' ')
+        a.value.gsub(/\s{2,}/, ' ').strip
       end
       
       def canonical
-        a.canonical.gsub(/\s{2,}/, ' ')
+        a.canonical.gsub(/\s{2,}/, ' ').strip
       end
       
       def pos
@@ -19,6 +19,46 @@ grammar ScientificNameClean
         a.details
       end
     }
+  end
+  
+  rule scientific_name_4
+    a:scientific_name_1 space hybrid_character space b:scientific_name_1 {
+      def value
+        a.value + " × " + b.value
+      end
+      
+      def canonical
+        a.canonical + " " + b.canonical
+      end
+      
+      def pos
+        a.pos.merge(b.pos)
+      end
+      
+      def details
+        {:hybridFormula => [a.details, b.details]}
+      end
+    }
+    /
+    a:scientific_name_1 space hybrid_character space [\?]? {
+      def value
+        a.value + " × ?"
+      end
+      
+      def canonical
+        a.canonical
+      end
+      
+      def pos
+        a.pos
+      end
+      
+      def details
+        {:hybridFormula => [a.details, "?"]}
+      end
+    }
+    /
+    scientific_name_3
   end
   
   rule scientific_name_3
@@ -94,8 +134,8 @@ grammar ScientificNameClean
         {:status => value}
       end
     }
-    /
-    latin_word
+    #/
+    #latin_word
   end
   
   
@@ -700,7 +740,21 @@ grammar ScientificNameClean
       end
     }
     / 
-    ("Å"/"Ö"/"Á"/"Ø"/"Ô"/"Š"/"Ś"/"Č"/"Ķ"/"Ł"/"É"/"Ž"/[A-Z]) [^0-9()\s&,]* {
+    ("Å"/"Ö"/"Á"/"Ø"/"Ô"/"Š"/"Ś"/"Č"/"Ķ"/"Ł"/"É"/"Ž"/[A-W]/[Y-Z]) [^0-9\[\]\(\)\s&,]* {
+      def value
+        text_value
+      end
+      
+      def pos
+        {interval.begin => ['author_word', interval.end]}
+      end
+      
+      def details
+        {:author => [value]}
+      end
+    }
+    /
+    "X" [^0-9\[\]\(\)\s&,]+ {
       def value
         text_value
       end
@@ -937,7 +991,7 @@ grammar ScientificNameClean
   rule hybrid_character
     ("x"/"X") {
       def value
-        "x"
+        "×"
       end
     }
     /
