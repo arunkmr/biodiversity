@@ -512,10 +512,13 @@ describe ScientificNameClean do
     details(sn).should == [{:genus=>{:string=>"Sapromyces"}, :species=>{:string=>"laidlawi", :authorship=>"ab Sabin 1941", :basionymAuthorTeam=>{:authorTeam=>"ab Sabin", :author=>["ab Sabin"], :year=>"1941"}}}]
     sn = 'Nocardia rugosa di Marco and Spalla 1957'
     details(sn).should == [{:genus=>{:string=>"Nocardia"}, :species=>{:string=>"rugosa", :authorship=>"di Marco and Spalla 1957", :basionymAuthorTeam=>{:authorTeam=>"di Marco and Spalla", :author=>["di Marco", "Spalla"], :year=>"1957"}}}]
+  end
+
+  it "should parse 'non' authors" do
     sn = 'Flexibacter elegans Lewin 1969 non Soriano 1945'
-    details(sn).should == [{:genus=>{:string=>"Flexibacter"}, :species=>{:string=>"elegans", :authorship=>"Lewin 1969 non Soriano 1945", :basionymAuthorTeam=>{:authorTeam=>"Lewin", :author=>["Lewin"], :year=>"1969"}}}]
+    details(sn).should == ''
     sn = 'Flexibacter elegans Soriano 1945, non Lewin 1969'
-    details(sn).should == [{:genus=>{:string=>"Flexibacter"}, :species=>{:string=>"elegans", :authorship=>"Soriano 1945, non Lewin 1969", :basionymAuthorTeam=>{:authorTeam=>"Soriano", :author=>["Soriano"], :year=>"1945"}}}]
+    details(sn).should == ''
   end
   
   # Combination genus names should be merged without dash or capital letter

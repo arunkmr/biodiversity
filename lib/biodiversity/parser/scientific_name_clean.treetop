@@ -1,6 +1,5 @@
 # encoding: UTF-8
 grammar ScientificNameClean
-
   rule root
     space a:scientific_name_5 space {
       def value
@@ -182,7 +181,6 @@ grammar ScientificNameClean
     /
     uninomial_name  
   end
-  
   
   rule status_part
     a:status_word space b:status_part {
@@ -553,8 +551,34 @@ grammar ScientificNameClean
       end
     }
   end
-  
+
   rule uninomial_name
+    # a:uninomial_name b:non_authorship {
+    #   def value
+    #     a.value + b.value
+    #   end
+
+    #   def canonical
+    #     a.canonical
+    #   end
+    #   
+    #   def pos
+    #     a.pos.merge(b.pos)
+    #   end
+
+    #   def hybrid
+    #     a.hybrid
+    #   end
+
+    #   def details
+    #     a.details.merge(b.details)
+    #   end
+    # }
+    # /
+    uninomial_name_clean
+  end
+  
+  rule uninomial_name_clean
     a:uninomial_string space b:infragenus space c:simple_authorship {
       def value
         a.value + " " + b.value + " " + c.value
@@ -643,6 +667,50 @@ grammar ScientificNameClean
       end
     }
   end
+
+  # rule non_authorship 
+  #   (space_hard a:non_authorship_string
+  #   /
+  #   space left_paren space a:non_authorship_string space right_paren
+  #   /
+  #   space "[" space a:non_authorship_string space "]") {
+  #     def value
+  #       a.value
+  #     end
+
+  #     def pos
+  #       a.pos
+  #     end
+
+  #     def details
+  #       a.details
+  #     end
+  #   }
+  # }
+
+  rule non_authorship_string
+    ("non"/"nec") space_hard a:authorship {
+      def value
+        " non " + a.value
+      end
+
+      def pos
+        res = {}
+        a.pos.keys.each do |k|
+          meaning = a.pos[k][0]
+          meaning = "wrong_author_word" if meaning == "author_word"
+          int_end = a.pos[k][0]
+          res[k] = [meaning, int_end]
+        end
+        res
+      end
+
+      def details
+        {}
+      end
+    }
+  end
+
   
   rule authorship
     a:basionym_authorship_with_parenthesis space b:simple_authorship ","? space c:ex_authorship {
@@ -782,28 +850,28 @@ grammar ScientificNameClean
   
 
   rule simple_authorship
-    a:authors_names space [,]? space b:year? [,]? space "non" space authors_names space [,]? space year {
-      def value
-        a.value + " " + b.value
-      end
-      
-      def pos
-        a.pos.merge(b.pos)
-      end
-      
-      def details
-        details_with_arg(:basionymAuthorTeam)
-      end
-      
-      def details_with_arg(authorTeamType = 'basionymAuthorTeam')
-        { :authorship => text_value, 
-          authorTeamType.to_sym => {
-            :authorTeam => a.text_value.strip
-          }.merge(a.details).merge(b.details)
-        }
-      end
-    }
-    /
+    # a:authors_names space [,]? space b:year? [,]? space "non" space authors_names space [,]? space year {
+    #   def value
+    #     a.value + " " + b.value
+    #   end
+    #   
+    #   def pos
+    #     a.pos.merge(b.pos)
+    #   end
+    #   
+    #   def details
+    #     details_with_arg(:basionymAuthorTeam)
+    #   end
+    #   
+    #   def details_with_arg(authorTeamType = 'basionymAuthorTeam')
+    #     { :authorship => text_value, 
+    #       authorTeamType.to_sym => {
+    #         :authorTeam => a.text_value.strip
+    #       }.merge(a.details).merge(b.details)
+    #     }
+    #   end
+    # }
+    # /
     a:authors_names space [,]? space b:year {
       def value
         a.value + " " + b.value
