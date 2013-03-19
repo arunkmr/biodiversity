@@ -15,10 +15,39 @@ describe ScientificNameParser do
 
   it 'should ScientificNameParser::fix_case' do
     names = [
-      ["QUERCUS ALBA", "Quercus alba"],
-      ["QUERCUS (QUERCUS) ALBA", "Quercus (Quercus) alba"],
-      ["QÜERCUS", "Qüercus"],
-      ["PARDOSA MOéSTA", "Pardosa moésta"],
+      ['QUERCUS ALBA', 'Quercus alba'],
+      ['QUERCUS (QUERCUS) ALBA', 'Quercus (Quercus) alba'],
+      ['QÜERCUS', 'Qüercus'],
+      ['PARDOSA MOéSTA', 'Pardosa moésta'],
+      ['pardosa moesta', 'Pardosa moesta'],
+      ['pardosa moesta', 'Pardosa moesta'],
+      ['amphipappus fremontii Torr. & Gray',
+        'Amphipappus fremontii Torr. & Gray'],
+      ['amphipogon turbinatus R. Br.',
+        'Amphipogon turbinatus R. Br.'],
+      ['CArex bebbii Olney', 'Carex bebbii Olney'],
+      ['CArex nigra (L.) Reichard', 'Carex nigra (L.) Reichard'],
+      ['CArex nigra (L.) Reichard', 'Carex nigra (L.) Reichard'],
+      ['chrysopogon aciculatus (Retz.)Trin.',
+        'Chrysopogon aciculatus (Retz.)Trin.'],
+      ['desmodium canadense (L.) DC.', 'Desmodium canadense (L.) DC.'],
+      ['GAlium palustre L.', 'Galium palustre L.'],
+      ['GLyceria striata (Lam.) A.S. Hitchc.',
+        'Glyceria striata (Lam.) A.S. Hitchc.'],
+      ['Peronospora leptosperma de bary', 'Peronospora leptosperma de Bary'],
+      ['Gentiana piundensis van royen', 'Gentiana piundensis van Royen'],
+      ['salix uva-ursi Pursh', 'Salix uva-ursi Pursh'],
+      ['SolIva pterosperma (Jussieu) Less.',
+        'Soliva pterosperma (Jussieu) Less.'],
+      ['Spiraea alba du roi', 'Spiraea alba du Roi'],
+      ['trisetum spicatum (L.) Richter s.l.',
+        'Trisetum spicatum (L.) Richter s.l.'],
+      ['viola blanda var. palustriformis Gray',
+        'Viola blanda var. palustriformis Gray'],
+      ['viridula Michx.', 'Viridula Michx.'],
+      ['Acer insigne van volxemii', 'Acer insigne van Volxemii'],
+      ['+ Laburnocytisus adamii (Poit.) C. Schneid.',
+        'Laburnocytisus adamii (Poit.) C. Schneid.'],
     ]
     names.each do |name, capitalization|
       ScientificNameParser::fix_case(name).should == capitalization
@@ -101,12 +130,12 @@ describe "ScientificNameParser with ranked canonicals" do
 end
 
 describe ParallelParser do
-  it "should find number of cpus" do
+  it 'should find number of cpus' do
     pparser = ParallelParser.new
     pparser.cpu_num.should > 0
   end
 
-  it "should parse several names in parallel" do
+  it 'should parse several names in parallel' do
     names = []
     read_test_file { |n| names << (n[:name]) if n[:name] }
     names.uniq!
@@ -116,7 +145,7 @@ describe ParallelParser do
     res.keys.size.should == names.size
   end
 
-  it "should parse several names in parallel with given num of processes" do
+  it 'should parse several names in parallel with given num of processes' do
     names = []
     read_test_file { |n| names << (n[:name]) if n[:name] }
     names.uniq!
@@ -126,8 +155,8 @@ describe ParallelParser do
     res.keys.size.should == names.size
   end
 
-  it "should have parsed name in native ruby format and in returned as \
-      a hash with name as a key and parsed data as value" do
+  it 'should have parsed name in native ruby format and in returned as \
+      a hash with name as a key and parsed data as value' do
     names = []
     read_test_file { |n| names << (n[:name]) if n[:name] }
     names.uniq!
