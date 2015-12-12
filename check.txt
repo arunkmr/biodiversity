@@ -1,0 +1,38 @@
+<?php
+if(isSet($_GET['application_id']))
+{
+$appl_id = $_GET['application_id'];
+
+$dbHost = 'localhost'; // usually localhost
+$dbUsername = 'root';
+$dbPassword = '';
+$dbDatabase = 'drda';
+
+$db = mysql_connect($dbHost, $dbUsername, $dbPassword) or die ("Unable to connect to Database Server.");
+mysql_select_db ($dbDatabase, $db) or die ("Could not select database.");
+
+$sql_check = mysql_query("select * from ihht_registration where Ihht_id={$appl_id}");
+
+	while($row = mysql_fetch_assoc($sql_check)) {
+	
+		
+//	print_r($row);
+
+
+
+//if(mysql_num_rows($sql_check))
+//{
+//echo '<font color="red">This beneficiary_id <STRONG>'.$appl_id.'</STRONG> is already in used .</font>';
+if(!empty($sql_check))
+{
+echo 'This beneficiary_id'.$appl_id.'is already used by'.$row['head_of_family'];
+}
+//}
+if(empty($sql_check))
+{
+echo 'OK';
+}
+}
+
+}
+?>
